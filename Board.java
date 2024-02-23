@@ -26,6 +26,11 @@ public class Board {
 
     }
 
+    public static Board newBoard() {
+        Board newBoard = new Board();
+        return newBoard;
+    }
+
     public static int[] genCellCount(int numRows) {
         int[] cellCounts = new int[numRows];
         for (int i = 0; i < (numRows + 1) / 2; i++) {

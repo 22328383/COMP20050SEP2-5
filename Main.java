@@ -9,7 +9,7 @@ public class Main {
 
         switch (input) {
             case "START":
-                drawBoard(newBoard());
+                drawBoard(Board.newBoard());
                 break;
             case "QUIT":
                 System.out.println("Ending Program...");

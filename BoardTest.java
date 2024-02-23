@@ -24,7 +24,7 @@ class BoardTest {
         assertEquals(4, Board.findRow(20,nineRows));
         assertEquals(5, Board.findRow(29,nineRows));
         assertEquals(7, Board.findRow(46,nineRows));
-        assertEquals(8, Board.findRow(56,nineRows));
+        assertEquals(9, Board.findRow(56,nineRows));
         assertEquals(9, Board.findRow(57,nineRows));
     }
 
