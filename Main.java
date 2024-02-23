@@ -16,7 +16,7 @@ public class Main {
                 System.exit(0);
                 break;
             default:
-                System.out.println("Invalid input detected.");
+                System.out.println("\nInvalid input detected.\n");
                 mainMenu();
                 break;
         }
