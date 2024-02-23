@@ -5,11 +5,11 @@ public class Main {
     public static void mainMenu() {
         System.out.println("Welcome To Black Box!\nPlease type START to begin or QUIT to end the program.");
         Scanner scanner = new Scanner(System.in);
-        String input = scanner.nextLine();
+        String input = scanner.nextLine().toUpperCase();
 
         switch (input) {
             case "START":
-                new GraphicBoard(new Board());
+                new GraphicBoard(Board.newBoard());
                 break;
             case "QUIT":
                 System.out.println("Ending Program...");
