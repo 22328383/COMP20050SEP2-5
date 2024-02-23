@@ -3,7 +3,9 @@ import java.awt.*;
 import java.awt.geom.*;
 
 public class GraphicBoard extends JFrame{
-    public GraphicBoard(){
+    private  final Board board;
+    public GraphicBoard(Board board){
+        this.board=board;
         setSize(1500,1000);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
