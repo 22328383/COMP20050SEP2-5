@@ -5,6 +5,7 @@ public class Board {
     static final int MAXCELLS = 61;
     static final int[] ROWCELLCNT = genCellCount(9);
     private ArrayList<Cell> allCells = new ArrayList<Cell>();
+    ArrayList<ArrayList<Integer>> allRays = new ArrayList<ArrayList<Integer>>();
 
     public Board() {
         for(int i = 0; i < MAXCELLS; i++) {
@@ -16,7 +17,7 @@ public class Board {
                 allSides.add(newSide);
             }
 
-            Cell newCell = new Cell(allSides, false, findRow(i ,ROWCELLCNT), null);
+            Cell newCell = new Cell(allSides, false, findRow(i ,ROWCELLCNT));
             for(int j = 0; j < Cell.MAXSIDES; j++) {
                 newCell.getSides().get(j).setOwner(newCell);
                 //add current cell as owner of side
@@ -44,6 +45,153 @@ public class Board {
         return cellCounts;
     }
 
+    public void setAtom(int idx) {
+        int[] neighbors = getNeighbors(idx);
+        allCells.get(idx).setHasAtom(true);
+        for(int i = 0; i < 6; i++) {
+            if(neighbors[i] == -1) {
+                continue;
+            }
+            allCells.get(neighbors[i]).getAtomSide().set(i, 1);
+        }
+    }
+
+    private int topRight(int index, int x, int y) {
+        int result = 0;
+        if (y == 0) {
+            result = -1;
+        }
+        if (y == 1 || y == 8) {
+            result = index-5;
+        }
+        if (y == 2 || y == 7) {
+            result = index-6;
+        }
+        if (y == 3 || y == 6) {
+            result = index-7;
+        }
+        if (y == 4 || y == 5) {
+            result = index-8;
+        }
+        int j = 0;
+        for (int i = 0; i < y; i++) {
+            j += ROWCELLCNT[i];
+        }
+        if(result == j) {
+            result = -1;
+        }
+        return result;
+    }
+
+    private int right(int index, int x, int y) {
+        int result;
+        if ((x + 1) < ROWCELLCNT[y]) {
+            result = index + 1;
+        } else {
+            result = -1;
+        }
+        return result;
+    }
+
+    private int botRight(int index, int x, int y) {
+        int result = 0;
+        if (y == 0 || y == 7) {
+            result = index+6;
+        }
+        if (y == 1 || y == 6) {
+            result = index+7;
+        }
+        if (y == 2 || y == 5) {
+            result = index+8;
+        }
+        if (y == 3 || y == 4) {
+            result = index+9;
+        }
+        if (y == 8) {
+            result = -1;
+        } else {
+            int j = 0;
+            for (int i = 0; i <= y + 1; i++) {
+                j += ROWCELLCNT[i];
+            }
+            if (result == j) {
+                result = -1;
+            }
+        }
+        return result;
+    }
+
+    private int botLeft(int index, int x, int y) {
+        int result = 0;
+        if (y == 0 || y == 7) {
+            result = index+5;
+        }
+        if (y == 1 || y == 6) {
+            result = index+6;
+        }
+        if (y == 2 || y == 5) {
+            result = index+7;
+        }
+        if (y == 3 || y == 4) {
+            result = index+8;
+        }
+        if (y == 8) {
+            result = -1;
+        } else {
+            int j = 0;
+            for (int i = 0; i < y; i++) {
+                j += ROWCELLCNT[i];
+            }
+            j += ROWCELLCNT[y] - 1;
+            if (result == j) {
+                result = -1;
+            }
+        }
+        return result;
+    }
+
+    private int left(int index, int x, int y) {
+        int result;
+        if ((x - 1) >= 0) {
+            result = index - 1;
+        } else {
+            result = -1;
+        }
+        return result;
+    }
+
+    private int topLeft(int index, int x, int y) {
+        int result = 0;
+        if (y == 0) {
+            result = -1;
+        }
+        if (y == 1 || y == 8) {
+            result = index-6;
+        }
+        if (y == 2 || y == 7) {
+            result = index-7;
+        }
+        if (y == 3 || y == 6) {
+            result = index-8;
+        }
+        if (y == 4 || y == 5) {
+            result = index-9;
+        }
+        if(y > 0) {
+            int j = 0;
+            for (int i = 0; i < y - 2; i++) {
+                j += ROWCELLCNT[i];
+            }
+            if(result == j) {
+                result = -1;
+            }
+        }
+        if(x == 0 && y == 1) {
+            result = -1;
+        }
+        return result;
+    }
+
     public int[] getNeighbors(int index) {
         int[] atomPos = getCoordinates(index);
         int x = atomPos[0];
@@ -52,122 +200,22 @@ public class Board {
         int[] neighborsArray = new int[6];
 
         // Top right neighbor
-        if (y == 0) {
-            neighborsArray[0] = -1;
-        }
-        if (y == 1 || y == 8) {
-            neighborsArray[0] = index-5;
-        }
-        if (y == 2 || y == 7) {
-            neighborsArray[0] = index-6;
-        }
-        if (y == 3 || y == 6) {
-            neighborsArray[0] = index-7;
-        }
-        if (y == 4 || y == 5) {
-            neighborsArray[0] = index-8;
-        }
-        int j = 0;
-        for (int i = 0; i < y; i++) {
-            j += ROWCELLCNT[i];
-        }
-        if(neighborsArray[0] == j) {
-            neighborsArray[0] = -1;
-        }
+        neighborsArray[0] = topRight(index, x, y);
 
         // Right neighbor
-        if ((x + 1) < ROWCELLCNT[y]) {
-            neighborsArray[1] = index + 1;
-        } else {
-            neighborsArray[1] = -1;
-        }
+        neighborsArray[1] = right(index, x, y);
 
         // Bottom right neighbor
-        if (y == 0 || y == 7) {
-            neighborsArray[2] = index+6;
-        }
-        if (y == 1 || y == 6) {
-            neighborsArray[2] = index+7;
-        }
-        if (y == 2 || y == 5) {
-            neighborsArray[2] = index+8;
-        }
-        if (y == 3 || y == 4) {
-            neighborsArray[2] = index+9;
-        }
-        if (y == 8) {
-            neighborsArray[2] = -1;
-        } else {
-            j = 0;
-            for (int i = 0; i <= y + 1; i++) {
-                j += ROWCELLCNT[i];
-            }
-            if (neighborsArray[2] == j) {
-                neighborsArray[2] = -1;
-            }
-        }
+        neighborsArray[2] = botRight(index, x, y);
 
         // Bottom left neighbor
-        if (y == 0 || y == 7) {
-            neighborsArray[3] = index+5;
-        }
-        if (y == 1 || y == 6) {
-            neighborsArray[3] = index+6;
-        }
-        if (y == 2 || y == 5) {
-            neighborsArray[3] = index+7;
-        }
-        if (y == 3 || y == 4) {
-            neighborsArray[3] = index+8;
-        }
-        if (y == 8) {
-            neighborsArray[3] = -1;
-        } else {
-            j = 0;
-            for (int i = 0; i < y; i++) {
-                j += ROWCELLCNT[i];
-            }
-            j += ROWCELLCNT[y] - 1;
-            if (neighborsArray[3] == j) {
-                neighborsArray[3] = -1;
-            }
-        }
+        neighborsArray[3] = botLeft(index, x, y);
 
         // Left neighbor
-        if ((x - 1) >= 0) {
-            neighborsArray[4] = index - 1;
-        } else {
-            neighborsArray[4] = -1;
-        }
+        neighborsArray[4] = left(index, x, y);
 
         // Top left neighbor
-        if (y == 0) {
-            neighborsArray[5] = -1;
-        }
-        if (y == 1 || y == 8) {
-            neighborsArray[5] = index-6;
-        }
-        if (y == 2 || y == 7) {
-            neighborsArray[5] = index-7;
-        }
-        if (y == 3 || y == 6) {
-            neighborsArray[5] = index-8;
-        }
-        if (y == 4 || y == 5) {
-            neighborsArray[5] = index-9;
-        }
-        if(y > 0) {
-            j = 0;
-            for (int i = 0; i < y - 2; i++) {
-                j += ROWCELLCNT[i];
-            }
-            if(neighborsArray[5] == j) {
-                neighborsArray[5] = -1;
-            }
-        }
-        if(x == 0 && y == 1) {
-            neighborsArray[5] = -1;
-        }
+        neighborsArray[5] = topLeft(index, x, y);
 
         return neighborsArray;
     }
@@ -202,16 +250,128 @@ public class Board {
         return row;
     }
 
+    public void addRay(int idx, int side) {
+        int[] pos = getCoordinates(idx);
+        int x = pos[0];
+        int y = pos[1];
+        ArrayList<Integer> newRay = new ArrayList<Integer>();
+
+        if(side == 0) {
+            int curIdx = idx;
+            while(botLeft(curIdx, x, y) != -1) {
+                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                    break;
+                }
+                newRay.add(curIdx);
+                curIdx = botLeft(curIdx, x, y);
+                pos = getCoordinates(curIdx);
+                x = pos[0];
+                y = pos[1];
+            }
+            newRay.add(curIdx);
+        }
+        if(side == 1) {
+            int curIdx = idx;
+            while(left(curIdx, x, y) != -1) {
+                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                    break;
+                }
+                newRay.add(curIdx);
+                curIdx = left(curIdx, x, y);
+                pos = getCoordinates(curIdx);
+                x = pos[0];
+                y = pos[1];
+            }
+            newRay.add(curIdx);
+        }
+        if(side == 2) {
+            int curIdx = idx;
+            while(topLeft(curIdx, x, y) != -1) {
+                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                    break;
+                }
+                newRay.add(curIdx);
+                curIdx = topLeft(curIdx, x, y);
+                pos = getCoordinates(curIdx);
+                x = pos[0];
+                y = pos[1];
+            }
+            newRay.add(curIdx);
+        }
+        if(side == 3) {
+            int curIdx = idx;
+            while(topRight(curIdx, x, y) != -1) {
+                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                    break;
+                }
+                newRay.add(curIdx);
+                curIdx = topRight(curIdx, x, y);
+                pos = getCoordinates(curIdx);
+                x = pos[0];
+                y = pos[1];
+            }
+            newRay.add(curIdx);
+        }
+        if(side == 4) {
+            int curIdx = idx;
+            while(right(curIdx, x, y) != -1) {
+                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                    break;
+                }
+                newRay.add(curIdx);
+                curIdx = right(curIdx, x, y);
+                pos = getCoordinates(curIdx);
+                x = pos[0];
+                y = pos[1];
+            }
+            newRay.add(curIdx);
+        }
+        if(side == 5) {
+            int curIdx = idx;
+            while(botRight(curIdx, x, y) != -1) {
+                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                    break;
+                }
+                newRay.add(curIdx);
+                curIdx = botRight(curIdx, x, y);
+                pos = getCoordinates(curIdx);
+                x = pos[0];
+                y = pos[1];
+            }
+            newRay.add(curIdx);
+        }
+        allRays.add(newRay);
+    }
+
     public void drawBoard() {
         int curRow = 1;
         for(int i = 0; i < allCells.size(); i++) {
             if(curRow == allCells.get(i).getRow()) {
-                System.out.print(i + " ");
+                boolean hasNeighbor = false;
+                if(allCells.get(i).hasAtom()) {
+                    System.out.print(i + "*" + " ");
+                    hasNeighbor = true;
+                }
+                for(int j = 0; j < 6; j++) {
+                    if(allCells.get(i).getAtomSide().get(j) != -1) {
+                        System.out.print(i + "(" + j + ") ");
+                        hasNeighbor = true;
+                    }
+                }
+                if(!hasNeighbor) {
+                    System.out.print(i + " ");
+                }
             } else {
                 curRow++;
                 System.out.println();
                 System.out.print(i + " ");
             }
+        }
+
+        System.out.println("");
+        for(int i = 0; i < allRays.size(); i++) {
+            System.out.println("");
+            System.out.println("Ray :" + allRays.get(i));
         }
     }
 
