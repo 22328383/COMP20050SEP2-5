@@ -4,6 +4,9 @@ import java.util.ArrayList;
 public class Board {
     static final int MAXCELLS = 61;
     static final int[] ROWCELLCNT = genCellCount(9);
+
+
+
     private ArrayList<Cell> allCells = new ArrayList<Cell>();
 
     public ArrayList<ArrayList<Integer>> getAllRays() {
@@ -35,6 +38,9 @@ public class Board {
     public static Board newBoard() {
         Board newBoard = new Board();
         return newBoard;
+    }
+    public ArrayList<Cell> getAllCells() {
+        return allCells;
     }
 
     public static int[] genCellCount(int numRows) {

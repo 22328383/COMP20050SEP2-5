@@ -8,12 +8,14 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine().toUpperCase();
 
+
         switch (input) {
             case "START":
                 Board userBoard = Board.newBoard();
-                new GraphicBoard(userBoard);
                 generateAtoms(userBoard);
-                rayControl(userBoard);
+                GraphicBoard gb= new GraphicBoard(userBoard);
+
+                rayControl(userBoard, gb);
                 break;
             case "QUIT":
                 System.out.println("Ending Program...");
@@ -35,7 +37,7 @@ public class Main {
         }
     }
 
-    public static void rayControl(Board userBoard) {
+    public static void rayControl(Board userBoard, GraphicBoard gb) {
         System.out.println("\nWould you like to ADD a ray or STOP the program?");
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine().toUpperCase();
@@ -48,8 +50,8 @@ public class Main {
                 int sideChoice = Integer.parseInt(scanner.nextLine());
                 userBoard.addRay(cellChoice,sideChoice);
                 System.out.println("\nHere is your updated board with the ray you entered...");
-                new GraphicBoard(userBoard);
-                rayControl(userBoard);
+                gb.callPaintRays();
+                rayControl(userBoard, gb);
                 break;
             case "STOP":
                 System.out.println("\nEnding program...");
@@ -57,7 +59,7 @@ public class Main {
                 break;
             default:
                 System.out.println("\nInvalid input detected.\n");
-                rayControl(userBoard);
+                rayControl(userBoard, gb);
                 break;
         }
         scanner.close();
