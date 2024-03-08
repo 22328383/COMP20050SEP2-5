@@ -5,6 +5,11 @@ public class Board {
     static final int MAXCELLS = 61;
     static final int[] ROWCELLCNT = genCellCount(9);
     private ArrayList<Cell> allCells = new ArrayList<Cell>();
+
+    public ArrayList<ArrayList<Integer>> getAllRays() {
+        return allRays;
+    }
+
     ArrayList<ArrayList<Integer>> allRays = new ArrayList<ArrayList<Integer>>();
 
     public Board() {
