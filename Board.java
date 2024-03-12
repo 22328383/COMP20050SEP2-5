@@ -1,19 +1,16 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class Board {
     static final int MAXCELLS = 61;
     static final int[] ROWCELLCNT = genCellCount(9);
-
-
-
     private ArrayList<Cell> allCells = new ArrayList<Cell>();
+    ArrayList<ArrayList<Integer>> allRays = new ArrayList<ArrayList<Integer>>();
 
     public ArrayList<ArrayList<Integer>> getAllRays() {
         return allRays;
     }
-
-    ArrayList<ArrayList<Integer>> allRays = new ArrayList<ArrayList<Integer>>();
 
     public Board() {
         for(int i = 0; i < MAXCELLS; i++) {
@@ -63,7 +60,7 @@ public class Board {
             if(neighbors[i] == -1) {
                 continue;
             }
-            allCells.get(neighbors[i]).getAtomSide().set(i, 1);
+            allCells.get(neighbors[i]).getAtomSides().set((i), 1);
         }
     }
 
@@ -190,10 +187,10 @@ public class Board {
         }
         if(y > 0) {
             int j = 0;
-            for (int i = 0; i < y - 2; i++) {
+            for(int i = 0; i < y - 1; i++) {
                 j += ROWCELLCNT[i];
             }
-            if(result == j) {
+            if(result == j - 1) {
                 result = -1;
             }
         }
@@ -261,6 +258,31 @@ public class Board {
         return row;
     }
 
+    private int applyPhys(int idx, int enteringSide) {
+        int opposite = allCells.get(idx).atomSideToClockwise().get((enteringSide+3)%6);
+        int borderCnt = 0;
+        for(int i = 0; i < allCells.get(idx).getAtomSides().size(); i++) {
+            if(allCells.get(idx).atomSideToClockwise().get(i) > 0) {
+                borderCnt += 1;
+            }
+        }
+        if(borderCnt >= 3) {
+            if((allCells.get(idx).atomSideToClockwise().get(enteringSide)) == 1) {
+                return 0;
+            }
+            addRay(idx, (enteringSide+3)%6);
+            return -1;
+        } else if (borderCnt == 2) {
+
+        } else if (borderCnt == 1) {
+            if(opposite > 0) {
+                return -1;
+            }
+        } else if (borderCnt == 0) {
+        }
+        return 0;
+    }
+
     public void addRay(int idx, int side) {
         int[] pos = getCoordinates(idx);
         int x = pos[0];
@@ -270,7 +292,8 @@ public class Board {
         if(side == 0) {
             int curIdx = idx;
             while(botLeft(curIdx, x, y) != -1) {
-                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                int terminate = applyPhys(curIdx, side);
+                if(terminate < 0) {
                     break;
                 }
                 newRay.add(curIdx);
@@ -284,7 +307,8 @@ public class Board {
         if(side == 1) {
             int curIdx = idx;
             while(left(curIdx, x, y) != -1) {
-                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                int terminate = applyPhys(curIdx, side);
+                if(terminate < 0) {
                     break;
                 }
                 newRay.add(curIdx);
@@ -298,7 +322,8 @@ public class Board {
         if(side == 2) {
             int curIdx = idx;
             while(topLeft(curIdx, x, y) != -1) {
-                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                int terminate = applyPhys(curIdx, side);
+                if(terminate < 0) {
                     break;
                 }
                 newRay.add(curIdx);
@@ -312,7 +337,8 @@ public class Board {
         if(side == 3) {
             int curIdx = idx;
             while(topRight(curIdx, x, y) != -1) {
-                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                int terminate = applyPhys(curIdx, side);
+                if(terminate < 0) {
                     break;
                 }
                 newRay.add(curIdx);
@@ -326,7 +352,8 @@ public class Board {
         if(side == 4) {
             int curIdx = idx;
             while(right(curIdx, x, y) != -1) {
-                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                int terminate = applyPhys(curIdx, side);
+                if(terminate < 0) {
                     break;
                 }
                 newRay.add(curIdx);
@@ -340,7 +367,8 @@ public class Board {
         if(side == 5) {
             int curIdx = idx;
             while(botRight(curIdx, x, y) != -1) {
-                if(allCells.get(curIdx).getAtomSide().get(side) > 0) {
+                int terminate = applyPhys(curIdx, side);
+                if(terminate < 0) {
                     break;
                 }
                 newRay.add(curIdx);
@@ -364,7 +392,7 @@ public class Board {
                     hasNeighbor = true;
                 }
                 for(int j = 0; j < 6; j++) {
-                    if(allCells.get(i).getAtomSide().get(j) != -1) {
+                    if(allCells.get(i).getAtomSides().get(j) != -1) {
                         System.out.print(i + "(" + j + ") ");
                         hasNeighbor = true;
                     }
@@ -383,6 +411,9 @@ public class Board {
         for(int i = 0; i < allRays.size(); i++) {
             System.out.println("");
             System.out.println("Ray :" + allRays.get(i));
+            for(int j = 0; j < allRays.get(i).size(); j++) {
+                System.out.println(allRays.get(i).get(j) + " " + allCells.get(allRays.get(i).get(j)).atomSideToClockwise());
+            }
         }
     }
 

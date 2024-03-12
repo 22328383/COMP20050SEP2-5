@@ -21,6 +21,13 @@ public class Cell {
         this.hasAtom = hasAtom;
     }
 
+    public ArrayList<Integer> atomSideToClockwise() {
+        ArrayList<Integer> cwAtomSides = (ArrayList<Integer>)this.atomSides.clone();
+        for(int i = 0; i < cwAtomSides.size(); i++) {
+            cwAtomSides.set(((i+3)%6), atomSides.get(i));
+        }
+        return cwAtomSides;
+    }
 
     public ArrayList<Side> getSides() {
         return sides;
@@ -30,7 +37,7 @@ public class Cell {
         return hasAtom;
     }
 
-    public ArrayList<Integer> getAtomSide() {
+    public ArrayList<Integer> getAtomSides() {
         return atomSides;
     }
 
