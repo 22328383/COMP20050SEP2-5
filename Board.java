@@ -259,7 +259,7 @@ public class Board {
     }
 
     private int applyPhys(int idx, int enteringSide) {
-        int opposite = allCells.get(idx).atomSideToClockwise().get((enteringSide+3)%6);
+        int opposite = allCells.get(idx).atomSideToClockwise().get( ((enteringSide+3)%6) );
         int borderCnt = 0;
         for(int i = 0; i < allCells.get(idx).getAtomSides().size(); i++) {
             if(allCells.get(idx).atomSideToClockwise().get(i) > 0) {
@@ -273,9 +273,31 @@ public class Board {
             addRay(idx, (enteringSide+3)%6);
             return -1;
         } else if (borderCnt == 2) {
-
+            if((allCells.get(idx).atomSideToClockwise().get(((enteringSide+4)%6))) == 1) {
+                if((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                    addRay(idx, (enteringSide+3)%6);
+                    return -1;
+                } else if(opposite == 1) {
+                    addRay(idx, (enteringSide+4)%6);
+                    return -1;
+                }
+            } else if(allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6)) == 1) {
+                if((allCells.get(idx).atomSideToClockwise().get(((enteringSide+4)%6))) == 1) {
+                    addRay(idx, (enteringSide+3)%6);
+                    return -1;
+                } else if(opposite == 1) {
+                    addRay(idx, (enteringSide+2)%6);
+                    return -1;
+                }
+            }
         } else if (borderCnt == 1) {
             if(opposite > 0) {
+                return -1;
+            } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                addRay(idx, (enteringSide+1)%6);
+                return -1;
+            } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide-2+6)%6))) == 1) {
+                addRay(idx, (enteringSide-1+6)%6);
                 return -1;
             }
         } else if (borderCnt == 0) {

@@ -32,10 +32,13 @@ class BoardTest {
     @Test
     void drawBoard() {
         Board newBoard = Board.newBoard();
-        newBoard.setAtom(22);
-        newBoard.setAtom(21);
-        newBoard.setAtom(29);
-        newBoard.addRay(60, 2);
+        newBoard.setAtom(13);
+        newBoard.setAtom(15);
+        newBoard.setAtom(31);
+        newBoard.setAtom(32);
+        newBoard.setAtom(51);
+        newBoard.setAtom(59);
+        newBoard.addRay(43, 4);
 
         newBoard.drawBoard();
     }
