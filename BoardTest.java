@@ -33,31 +33,32 @@ class BoardTest {
     void drawBoard() {
         Board newBoard = Board.newBoard();
         //demo 1 (check rulebook)
-//        newBoard.setAtom(12);
-//        newBoard.setAtom(21);
-//        newBoard.setAtom(22);
-//        newBoard.setAtom(25);
-//        newBoard.setAtom(28);
-//        newBoard.setAtom(29);
-//
-//        newBoard.addRay(4, 1);
-//        newBoard.addRay(49, 2);
-//        newBoard.addRay(18, 4);
-//        newBoard.addRay(26, 4);
-//        newBoard.addRay(58, 2);
-//        newBoard.addRay(60, 2);
+        newBoard.setAtom(12);
+        newBoard.setAtom(21);
+        newBoard.setAtom(22);
+        newBoard.setAtom(25);
+        newBoard.setAtom(28);
+        newBoard.setAtom(29);
+
+        newBoard.addRay(4, 1);
+        newBoard.addRay(49, 2);
+        newBoard.addRay(17, 1);
+        newBoard.addRay(18, 4);
+        newBoard.addRay(26, 4);
+        newBoard.addRay(58, 2);
+        newBoard.addRay(60, 2);
 
         //demo 2 (check rulebook)
-        newBoard.setAtom(13);
-        newBoard.setAtom(15);
-        newBoard.setAtom(31);
-        newBoard.setAtom(32);
-        newBoard.setAtom(51);
-        newBoard.setAtom(59);
-
-        newBoard.addRay(3, 0);
-        newBoard.addRay(43, 4);
-        newBoard.addRay(55, 2);
+//        newBoard.setAtom(13);
+//        newBoard.setAtom(15);
+//        newBoard.setAtom(31);
+//        newBoard.setAtom(32);
+//        newBoard.setAtom(51);
+//        newBoard.setAtom(59);
+//
+//        newBoard.addRay(3, 0);
+//        newBoard.addRay(43, 4);
+//        newBoard.addRay(55, 2);
 
         newBoard.drawBoard();
     }

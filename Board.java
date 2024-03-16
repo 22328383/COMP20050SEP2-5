@@ -291,6 +291,45 @@ public class Board {
                 }
             }
         } else if (borderCnt == 1) {
+            int[] pos = getCoordinates(idx);
+            int x = pos[0];
+            int y = pos[1];
+            if((enteringSide == 0)) {
+                int testingIdx = topRight(idx, x, y);
+                if(testingIdx < 0) {
+                    return -1;
+                }
+            }
+            if((enteringSide == 1)) {
+                int testingIdx = right(idx, x, y);
+                if(testingIdx < 0) {
+                    return -1;
+                }
+            }
+            if((enteringSide == 2)) {
+                int testingIdx = botRight(idx, x, y);
+                if(testingIdx < 0) {
+                    return -1;
+                }
+            }
+            if((enteringSide == 3)) {
+                int testingIdx = botLeft(idx, x, y);
+                if(testingIdx < 0) {
+                    return -1;
+                }
+            }
+            if((enteringSide == 4)) {
+                int testingIdx = left(idx, x, y);
+                if(testingIdx < 0) {
+                    return -1;
+                }
+            }
+            if((enteringSide == 5)) {
+                int testingIdx = topLeft(idx, x, y);
+                if(testingIdx < 0) {
+                    return -1;
+                }
+            }
             if(opposite > 0) {
                 return -1;
             } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
