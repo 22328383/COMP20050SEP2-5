@@ -50,7 +50,8 @@ public class Main {
                 int sideChoice = Integer.parseInt(scanner.nextLine());
                 userBoard.addRay(cellChoice,sideChoice);
                 System.out.println("\nHere is your updated board with the ray you entered...");
-                gb.callPaintRays();
+                gb.setIsFirstTime();
+                gb.repaint();
                 rayControl(userBoard, gb);
                 break;
             case "STOP":

@@ -7,7 +7,9 @@ public class GraphicBoard extends JFrame{
 
     private static final double XMOD=25*Math.pow(3, 0.5);
     private static final double YMOD=75.0;
-    private static Graphics grap = null;
+
+    private int lastRayPainted=0;
+    private static boolean isFirstTime=true;
 
     private  final Board board;
     public GraphicBoard(Board board){
@@ -21,12 +23,13 @@ public class GraphicBoard extends JFrame{
 
     public void paint(Graphics g){
         double initialx=300.0, initialy=200.0;
-        grap=g;
-        paintHexagons(initialx, initialy, g);
-        paintAtoms(initialx,initialy,g);
-
-        //paintRays(initialx, initialy, g);
-
+        if(isFirstTime) {
+            paintHexagons(initialx, initialy, g);
+            paintAtoms(initialx, initialy, g);
+        }
+        else {
+            paintRays(initialx, initialy, g);
+        }
     }
 
 
@@ -114,7 +117,6 @@ public class GraphicBoard extends JFrame{
         ArrayList<Cell> cellArr=board.getAllCells();
         for(int i=0;i< cellArr.size();i++){
             if(cellArr.get(i).hasAtom()){
-                //System.out.println(cellArr.get(i)+"   "+i);
                 y=initialy+(cellArr.get(i).getRow()-1)*YMOD+25.0;
                 x=initialx+getXdiff(i);
                 drawAtom(x, y, w, g2d);
@@ -183,27 +185,27 @@ public class GraphicBoard extends JFrame{
 
 
 
-    public void callPaintRays(){
-        paintRays(300.0, 200.0, grap);
-    }
+
 
 
     public void paintRays(double initialx, double initialy, Graphics g) {
         ArrayList<ArrayList<Integer>> raysArray = board.getAllRays();
-
-
-        ArrayList<Integer> ray=raysArray.get(raysArray.size()-1);
-        //System.out.println(ray+"SIZE="+ray.size());
-        double xf, yf, xl, yl;
-
-        xf=initialx+getXdiff(ray.getFirst());
-        yf=initialy+(board.getAllCells().get(ray.getFirst()).getRow()-1)*YMOD+25.0;
-        xl=initialx+getXdiff(ray.getLast());
-        yl=initialy+(board.getAllCells().get(ray.getLast()).getRow()-1)*YMOD+25.0;
-
         Graphics2D g2d=(Graphics2D) g.create();
-        drawRay(xf, yf, xl, yl, g2d);
+        g2d.setColor(Color.BLUE);
+        double xf, yf, xl, yl;
+        for(int i=lastRayPainted;i<raysArray.size();i++) {
+            ArrayList<Integer> ray = raysArray.get(i);
 
+
+            xf = initialx + getXdiff(ray.getFirst()) + 25;
+            yf = initialy + (board.getAllCells().get(ray.getFirst()).getRow() - 1) * YMOD + 50.0;
+            xl = initialx + getXdiff(ray.getLast()) + 25;
+            yl = initialy + (board.getAllCells().get(ray.getLast()).getRow() - 1) * YMOD + 50.0;
+
+
+            drawRay(xf, yf, xl, yl, g2d);
+        }
+        lastRayPainted= raysArray.size();
         g2d.dispose();
     }
 
@@ -215,6 +217,9 @@ public class GraphicBoard extends JFrame{
         g2d.draw(path);
     }
 
+    public void setIsFirstTime(){
+        isFirstTime=false;
+    }
 
 
 }
