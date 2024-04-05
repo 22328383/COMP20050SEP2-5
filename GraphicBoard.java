@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class GraphicBoard extends JFrame{
 
+    private static final double initialXPos=300.0;
+    private static final double initalYPos=200.0;
     private static final double XMOD=25*Math.pow(3, 0.5);
     private static final double YMOD=75.0;
 
@@ -24,12 +26,38 @@ public class GraphicBoard extends JFrame{
     public void paint(Graphics g){
         double initialx=300.0, initialy=200.0;
         if(isFirstTime) {
+            paintExampleHexagon(g);
             paintHexagons(initialx, initialy, g);
             paintAtoms(initialx, initialy, g);
+            cellNumbers(g);
         }
         else {
             paintRays(initialx, initialy, g);
         }
+    }
+
+    public void paintExampleHexagon(Graphics g){
+        Path2D.Double poly;
+        double []xarr= fillxArray(100);
+        double []yarr= fillyArray(100);
+        poly = new Path2D.Double();
+        poly.moveTo(100, 100);
+        for(int j=1;j<6;j++){
+            poly.lineTo(xarr[j], yarr[j]);
+
+        }
+        poly.closePath();
+
+        Graphics2D g2d= (Graphics2D) g.create();
+        g2d.draw(poly);
+        g2d.dispose();
+
+        g.drawString("0", 121, 107);
+        g.drawString("1", 150, 150);
+        g.drawString("2", 121, 200);
+        g.drawString("3", 79, 200);
+        g.drawString("4", 50, 150);
+        g.drawString("5", 79, 107);
     }
 
 
@@ -220,6 +248,39 @@ public class GraphicBoard extends JFrame{
     public void setIsFirstTime(){
         isFirstTime=false;
     }
+
+
+
+    public void cellNumbers(Graphics g){
+        int x=(int)initialXPos;
+        int y=(int)initalYPos;
+
+
+        double xmod=XMOD, ymod=YMOD;
+        boolean isHalfway=false;
+        int i=5, k=0;
+        while (i!=4) {
+
+            int currentX=x;
+            for(int j=0;j<i;j++){
+                g.drawString(Integer.toString(k), currentX, y+50);
+                currentX+=2*XMOD;
+                k++;
+            }
+
+            if(i==9){
+                isHalfway=true;
+                xmod*=-1;
+            }
+            x-=xmod;
+            y+=ymod;
+
+            i = modifyi(i, isHalfway);
+        }
+    }
+
+
+
 
 
 }
