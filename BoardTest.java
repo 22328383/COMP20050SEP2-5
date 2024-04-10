@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -139,4 +140,58 @@ class BoardTest {
         System.out.println("Expected output: x = 2, y = 0");
     }
 
+    @Test
+    void scoreBoardTest() {
+        Board newBoard = Board.newBoard();
+        newBoard.Scoreboard = new Board.Scoreboard("gosling", "pitt");
+        newBoard.Scoreboard.calculateScore(0, 8, 0);
+        newBoard.Scoreboard.calculateScore(1, 4, 2);
+        System.out.println(newBoard.Scoreboard.toString());
+    }
+
+    @Test
+    void saveTest() {
+        Board newBoard = Board.newBoard();
+        newBoard.Scoreboard = new Board.Scoreboard("gosling", "pitt");
+        newBoard.Scoreboard.calculateScore(0, 8, 0);
+        newBoard.Scoreboard.calculateScore(1, 4, 2);
+
+        Board blankBoard = Board.newBoard();
+
+        newBoard.setAtom(12);
+        newBoard.setAtom(21);
+        newBoard.setAtom(22);
+        newBoard.setAtom(25);
+        newBoard.setAtom(28);
+        newBoard.setAtom(29);
+
+        newBoard.addRay(4, 1);
+        newBoard.addRay(49, 2);
+        newBoard.addRay(17, 1);
+        newBoard.addRay(18, 4);
+        newBoard.addRay(26, 4);
+        newBoard.addRay(58, 2);
+        newBoard.addRay(60, 2);
+
+        try {
+            newBoard.saveBoard();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        Board loadedBoard;
+        try {
+            loadedBoard = Board.loadBoard();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertEquals(newBoard.drawBoard(), loadedBoard.drawBoard());
+        assertNotEquals(blankBoard.drawBoard(), loadedBoard.drawBoard());
+
+        assertEquals(newBoard.Scoreboard.toString(), loadedBoard.Scoreboard.toString());
+        assertNotEquals(blankBoard.Scoreboard.toString(), loadedBoard.Scoreboard.toString());
+    }
 }
