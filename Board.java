@@ -22,8 +22,7 @@ public class Board implements Serializable {
 
     // method to create a new board
     public static Board newBoard() {
-        Board newBoard = new Board();
-        return newBoard;
+        return new Board();
     }
 
     //save state to file
@@ -42,19 +41,23 @@ public class Board implements Serializable {
         }
     }
 
-    // get all cells on a board
+    // getter for all cells on a board
     public ArrayList<Cell> getAllCells() {
         return allCells;
     }
 
     // method to generate cell count for each row
     public static int[] genCellCount(int numRows) {
+        if(numRows <= 0) {
+            throw new IllegalArgumentException("number of rows must be positive");
+        }
+
         int[] cellCounts = new int[numRows];
-        for (int i = 0; i < (numRows + 1) / 2; i++) {
+        for(int i = 0; i < (numRows + 1) / 2; i++) {
             cellCounts[i] = i + 5;
         }
 
-        for (int i = (numRows + 1) / 2; i < numRows; i++) {
+        for(int i = (numRows + 1) / 2; i < numRows; i++) {
             cellCounts[i] = cellCounts[numRows - i - 1];
         }
 
@@ -63,6 +66,8 @@ public class Board implements Serializable {
 
     // method to set an atom at specified index
     public void setAtom(int idx) {
+        checkIndex(idx);
+
         int[] neighbors = getNeighbors(idx); // get all neighbors of the cell at a specified index
         allCells.get(idx).setHasAtom(true); // set the specified cell to have an atom
         for(int i = 0; i < 6; i++) {
@@ -73,23 +78,26 @@ public class Board implements Serializable {
         }
     }
 
+    // calculates index of the top-right cell based on the current index (x, y)
+    private int topRight(int idx, int x, int y) {
+        checkIndex(idx);
 
-    private int topRight(int index, int x, int y) {
         int result = 0;
-        if (y == 0) {
+        // pattern for top rights
+        if(y == 0) {
             result = -1; // there is no top right
         }
-        if (y == 1 || y == 8) { // row 1 or 8
-            result = index-5;
+        if(y == 1 || y == 8) { // row 1 or 8
+            result = idx-5;
         }
-        if (y == 2 || y == 7) { // row 2 or 7
-            result = index-6;
+        if(y == 2 || y == 7) { // row 2 or 7
+            result = idx-6;
         }
-        if (y == 3 || y == 6) { // row 3 or 6
-            result = index-7;
+        if(y == 3 || y == 6) { // row 3 or 6
+            result = idx-7;
         }
-        if (y == 4 || y == 5) { // row 4 or 5
-            result = index-8;
+        if(y == 4 || y == 5) { // row 4 or 5
+            result = idx-8;
         }
         int j = 0;
 
@@ -104,99 +112,123 @@ public class Board implements Serializable {
         return result;
     }
 
-    private int right(int index, int x, int y) {
+    // calculates index of the right cell based on the current index (x, y)
+    private int right(int idx, int x, int y) {
+        checkIndex(idx);
+
         int result;
-        if ((x + 1) < ROWCELLCNT[y]) {
-            result = index + 1;
+        if((x + 1) < ROWCELLCNT[y]) {
+            // just next one
+            result = idx + 1;
         } else {
+            // if it is on the edge, invalid
             result = -1;
         }
         return result;
     }
 
-    private int botRight(int index, int x, int y) {
+    // calculates index of the bottom-right cell based on the current index (x, y)
+    private int botRight(int idx, int x, int y) {
+        checkIndex(idx);
+
         int result = 0;
-        if (y == 0 || y == 7) {
-            result = index+6;
+        // pattern for bot rights
+        if(y == 0 || y == 7) {
+            result = idx+6;
         }
-        if (y == 1 || y == 6) {
-            result = index+7;
+        if(y == 1 || y == 6) {
+            result = idx+7;
         }
-        if (y == 2 || y == 5) {
-            result = index+8;
+        if(y == 2 || y == 5) {
+            result = idx+8;
         }
-        if (y == 3 || y == 4) {
-            result = index+9;
+        if(y == 3 || y == 4) {
+            result = idx+9;
         }
-        if (y == 8) {
-            result = -1;
+        if(y == 8) {
+            result = -1; // invalid index, no bottom-right neighbor
         } else {
             int j = 0;
-            for (int i = 0; i <= y + 1; i++) {
+            for(int i = 0; i <= y + 1; i++) {
                 j += ROWCELLCNT[i];
             }
-            if (result == j) {
-                result = -1;
+            if(result == j) {
+                result = -1; // invalid index if it aligns with the start of the next row
             }
         }
         return result;
     }
 
-    private int botLeft(int index, int x, int y) {
+    // calculates index of the bottom-left cell based on the current index (x, y)
+    private int botLeft(int idx, int x, int y) {
+        checkIndex(idx);
+
         int result = 0;
-        if (y == 0 || y == 7) {
-            result = index+5;
+        // pattern for bot lefts
+        if(y == 0 || y == 7) {
+            result = idx+5;
         }
-        if (y == 1 || y == 6) {
-            result = index+6;
+        if(y == 1 || y == 6) {
+            result = idx+6;
         }
-        if (y == 2 || y == 5) {
-            result = index+7;
+        if(y == 2 || y == 5) {
+            result = idx+7;
         }
-        if (y == 3 || y == 4) {
-            result = index+8;
+        if(y == 3 || y == 4) {
+            result = idx+8;
         }
-        if (y == 8) {
-            result = -1;
+        if(y == 8) {
+            result = -1; // invalid index, no bottom-left neighbor
         } else {
             int j = 0;
-            for (int i = 0; i < y; i++) {
+            for(int i = 0; i < y; i++) {
                 j += ROWCELLCNT[i];
             }
             j += ROWCELLCNT[y] - 1;
-            if (result == j) {
+            if(result == j) {
+                // invalid index if it aligns with the start of the next row
                 result = -1;
             }
         }
         return result;
     }
 
-    private int left(int index, int x, int y) {
+    // calculates index of the left cell based on the current index (x, y)
+    private int left(int idx, int x, int y) {
+        checkIndex(idx);
+
         int result;
-        if ((x - 1) >= 0) {
-            result = index - 1;
+        if((x - 1) >= 0) {
+            // previous one
+            result = idx - 1;
         } else {
+            // cant be left when at edge
             result = -1;
         }
         return result;
     }
 
-    private int topLeft(int index, int x, int y) {
+    // calculates index of the top-left cell based on the current index (x, y)
+    private int topLeft(int idx, int x, int y) {
+        checkIndex(idx);
+
         int result = 0;
-        if (y == 0) {
+        if(y == 0) {
+            // can't have top left when you're the first
             result = -1;
         }
-        if (y == 1 || y == 8) {
-            result = index-6;
+        // pattern for bot lefts
+        if(y == 1 || y == 8) {
+            result = idx-6;
         }
-        if (y == 2 || y == 7) {
-            result = index-7;
+        if(y == 2 || y == 7) {
+            result = idx-7;
         }
-        if (y == 3 || y == 6) {
-            result = index-8;
+        if(y == 3 || y == 6) {
+            result = idx-8;
         }
-        if (y == 4 || y == 5) {
-            result = index-9;
+        if(y == 4 || y == 5) {
+            result = idx-9;
         }
         if(y > 0) {
             int j = 0;
@@ -204,66 +236,80 @@ public class Board implements Serializable {
                 j += ROWCELLCNT[i];
             }
             if(result == j - 1) {
+                // invalid index if it aligns with the start of the next row
                 result = -1;
             }
         }
         if(x == 0 && y == 1) {
+            // super specific case
             result = -1;
         }
         return result;
     }
 
-    public int[] getNeighbors(int index) {
-        int[] atomPos = getCoordinates(index);
+    // retrieves the indexes of the neighboring cells for a given cell index on a grid.
+    public int[] getNeighbors(int idx) {
+        checkIndex(idx);
+
+        // convert index to co-ord system
+        int[] atomPos = getCoordinates(idx);
         int x = atomPos[0];
         int y = atomPos[1];
 
         int[] neighborsArray = new int[6];
 
-        // Top right neighbor
-        neighborsArray[0] = topRight(index, x, y);
+        // top right neighbor
+        neighborsArray[0] = topRight(idx, x, y);
 
-        // Right neighbor
-        neighborsArray[1] = right(index, x, y);
+        // right neighbor
+        neighborsArray[1] = right(idx, x, y);
 
-        // Bottom right neighbor
-        neighborsArray[2] = botRight(index, x, y);
+        //bottom right neighbor
+        neighborsArray[2] = botRight(idx, x, y);
 
-        // Bottom left neighbor
-        neighborsArray[3] = botLeft(index, x, y);
+        // bottom left neighbor
+        neighborsArray[3] = botLeft(idx, x, y);
 
-        // Left neighbor
-        neighborsArray[4] = left(index, x, y);
+        // left neighbor
+        neighborsArray[4] = left(idx, x, y);
 
-        // Top left neighbor
-        neighborsArray[5] = topLeft(index, x, y);
+        // top left neighbor
+        neighborsArray[5] = topLeft(idx, x, y);
 
         return neighborsArray;
     }
 
-
-    public int[] getCoordinates(int index) {
+    // converts a cells index to a co-ord based system location
+    public int[] getCoordinates(int idx) {
+        checkIndex(idx);
         int x = 0;
-        int y = allCells.get(index).getRow() - 1;
+        // 0 is start, not 1
+        int y = allCells.get(idx).getRow() - 1;
 
         int totalCells = 0;
-        for (int i = 0; i < y; i++) {
+
+        // count cells until we hit our one
+        for(int i = 0; i < y; i++) {
             totalCells += ROWCELLCNT[i];
         }
-        x = index - totalCells;
 
-        int[] coordinates = {x, y};
-        return coordinates;
+        x = idx - totalCells;
+
+        return new int[]{x, y};
     }
 
-    public static int findRow(int cellNum, int[] cellCounts) {
+    // finds the row number from a cells index
+    public static int findRow(int idx, int[] cellCounts) {
+        checkIndex(idx);
+
         int row = 0;
         int totalCells = 0;
 
-        for (int count : cellCounts) {
+        // increment total cell count until we hit our desired
+        for(int count : cellCounts) {
             row++;
             totalCells += count;
-            if (totalCells >= (cellNum+1)) {
+            if(totalCells >= (idx+1)) {
                 break;
             }
         }
@@ -271,14 +317,24 @@ public class Board implements Serializable {
         return row;
     }
 
+    // determines the behaviour of a ray entering a cell
     private int applyPhys(int idx, int enteringSide) {
+        checkIndex(idx);
+
+        // shortcut instead of writing whole line
         int opposite = allCells.get(idx).atomSideToClockwise().get( ((enteringSide+3)%6) );
         int borderCnt = 0;
+
+        // counts how many atoms are nearby location
         for(int i = 0; i < allCells.get(idx).getAtomSides().size(); i++) {
             if(allCells.get(idx).atomSideToClockwise().get(i) > 0) {
                 borderCnt += 1;
             }
         }
+
+        // return -1 means to terminate recursive nature of ray
+
+        // 3+ around, 180 degrees
         if(borderCnt >= 3) {
             if((allCells.get(idx).atomSideToClockwise().get(enteringSide)) == 1) {
                 return 0;
@@ -286,8 +342,10 @@ public class Board implements Serializable {
             addRay(idx, (enteringSide+3)%6);
             return -1;
         } else if (borderCnt == 2) {
+            // 2 around, either 180 or 60
             if((allCells.get(idx).atomSideToClockwise().get(((enteringSide+4)%6))) == 1) {
                 if((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                    // two adjacent atoms
                     addRay(idx, (enteringSide+3)%6);
                     return -1;
                 } else if(opposite == 1) {
@@ -296,6 +354,7 @@ public class Board implements Serializable {
                 }
             } else if(allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6)) == 1) {
                 if((allCells.get(idx).atomSideToClockwise().get(((enteringSide+4)%6))) == 1) {
+                    // two 'bridged' atoms
                     addRay(idx, (enteringSide+3)%6);
                     return -1;
                 } else if(opposite == 1) {
@@ -303,16 +362,21 @@ public class Board implements Serializable {
                     return -1;
                 }
             }
+            // 1 around, 120 degree
         } else if (borderCnt == 1) {
+
             int[] pos = getCoordinates(idx);
             int x = pos[0];
             int y = pos[1];
+
             if((enteringSide == 0)) {
                 int testingIdx = topRight(idx, x, y);
                 if(testingIdx < 0) {
                     return -1;
                 }
             }
+
+            // if trying to start ray inside circle of influence
             if((enteringSide == 1)) {
                 int testingIdx = right(idx, x, y);
                 if(testingIdx < 0) {
@@ -343,7 +407,9 @@ public class Board implements Serializable {
                     return -1;
                 }
             }
+
             if(opposite > 0) {
+                // nothing behind you
                 return -1;
             } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
                 addRay(idx, (enteringSide+1)%6);
@@ -352,20 +418,24 @@ public class Board implements Serializable {
                 addRay(idx, (enteringSide-1+6)%6);
                 return -1;
             }
-        } else if (borderCnt == 0) {
         }
         return 0;
     }
 
+    // simulates ray propagation by recursively applying rules until termination
     public void addRay(int idx, int side) {
+        checkIndex(idx);
+
         int[] pos = getCoordinates(idx);
         int x = pos[0];
         int y = pos[1];
-        ArrayList<Integer> newRay = new ArrayList<Integer>();
+        ArrayList<Integer> newRay = new ArrayList<>();
 
         if(side == 0) {
+            // shoots a ray toward the bottom left
             int curIdx = idx;
             while(botLeft(curIdx, x, y) != -1) {
+                // till we hit a roadblock
                 int terminate = applyPhys(curIdx, side);
                 if(terminate < 0) {
                     break;
@@ -379,8 +449,10 @@ public class Board implements Serializable {
             newRay.add(curIdx);
         }
         if(side == 1) {
+            // shoots a ray toward the left
             int curIdx = idx;
             while(left(curIdx, x, y) != -1) {
+                // till we hit a roadblock
                 int terminate = applyPhys(curIdx, side);
                 if(terminate < 0) {
                     break;
@@ -394,8 +466,10 @@ public class Board implements Serializable {
             newRay.add(curIdx);
         }
         if(side == 2) {
+            // shoots a ray toward the top left
             int curIdx = idx;
             while(topLeft(curIdx, x, y) != -1) {
+                // till we hit a roadblock
                 int terminate = applyPhys(curIdx, side);
                 if(terminate < 0) {
                     break;
@@ -409,8 +483,10 @@ public class Board implements Serializable {
             newRay.add(curIdx);
         }
         if(side == 3) {
+            // shoots a ray toward the top right
             int curIdx = idx;
             while(topRight(curIdx, x, y) != -1) {
+                // till we hit a roadblock
                 int terminate = applyPhys(curIdx, side);
                 if(terminate < 0) {
                     break;
@@ -424,8 +500,10 @@ public class Board implements Serializable {
             newRay.add(curIdx);
         }
         if(side == 4) {
+            // shoots a ray toward the right
             int curIdx = idx;
             while(right(curIdx, x, y) != -1) {
+                // till we hit a roadblock
                 int terminate = applyPhys(curIdx, side);
                 if(terminate < 0) {
                     break;
@@ -439,8 +517,10 @@ public class Board implements Serializable {
             newRay.add(curIdx);
         }
         if(side == 5) {
+            // shoots a ray toward the bottom right
             int curIdx = idx;
             while(botRight(curIdx, x, y) != -1) {
+                // till we hit a roadblock
                 int terminate = applyPhys(curIdx, side);
                 if(terminate < 0) {
                     break;
@@ -453,10 +533,15 @@ public class Board implements Serializable {
             }
             newRay.add(curIdx);
         }
+
+        // rays finally done, add it to list of all
         allRays.add(newRay);
     }
 
-    public String drawBoard() {
+    // usually for debugging/testing, helper function that draws a version of a board in ASCII
+    @Override
+    public String toString() {
+
         String output = "";
 
         int curRow = 1;
@@ -464,39 +549,30 @@ public class Board implements Serializable {
             if(curRow == allCells.get(i).getRow()) {
                 boolean hasNeighbor = false;
                 if(allCells.get(i).hasAtom()) {
-                    System.out.print(i + "*" + " ");
                     output = output + i + "*" + " ";
                     hasNeighbor = true;
                 }
                 for(int j = 0; j < 6; j++) {
                     if(allCells.get(i).getAtomSides().get(j) != -1) {
-                        System.out.print(i + "(" + j + ") ");
                         output = output + i + "(" + j + ") ";
                         hasNeighbor = true;
                     }
                 }
                 if(!hasNeighbor) {
-                    System.out.print(i + " ");
                     output = output + i + " ";
                 }
             } else {
                 curRow++;
-                System.out.println();
                 output = output + "\n";
-                System.out.print(i + " ");
                 output = output + i + " ";
             }
         }
 
-        System.out.println("");
         output = output + "\n";
         for(int i = 0; i < allRays.size(); i++) {
-            System.out.println("");
             output = output + "\n";
-            System.out.println("Ray :" + allRays.get(i));
             output = output + "Ray :" + allRays.get(i);
             for(int j = 0; j < allRays.get(i).size(); j++) {
-                System.out.println(allRays.get(i).get(j) + " " + allCells.get(allRays.get(i).get(j)).atomSideToClockwise());
                 output = output + allRays.get(i).get(j) + " " + allCells.get(allRays.get(i).get(j)).atomSideToClockwise();
             }
         }
@@ -504,8 +580,15 @@ public class Board implements Serializable {
         return output;
     }
 
+    private static void checkIndex(int idx) {
+        if(idx < 0 || idx >= MAXCELLS) {
+            throw new IllegalArgumentException("cell number must be within the range of 0 and " + (MAXCELLS - 1));
+        }
+    }
+
 
     public static class Scoreboard implements Serializable {
+        // the scoreboard subclass, part of a given board
         private final String[] playerNames;
         private int[] scores;
 
