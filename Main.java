@@ -49,6 +49,7 @@ public class Main {
                 userBoard.addRay(cellChoice,sideChoice);
                 System.out.println("\nHere is your updated board with the ray you entered...");
                 gb.setIsFirstTime();
+                gb.setRayCellSide(sideChoice);
                 gb.repaint();
                 rayControl(userBoard, gb);
                 break;
