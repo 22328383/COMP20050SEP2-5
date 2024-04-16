@@ -6,11 +6,13 @@ import java.util.ArrayList;
 public class GraphicBoard extends JFrame{
 
     private static final double initialXPos=300.0;
-    private static final double initalYPos=200.0;
+    private static final double initialYPos=200.0;
     private static final double XMOD=25*Math.pow(3, 0.5);
     private static final double YMOD=75.0;
 
     private int lastRayPainted=0;
+    private int rayCellSide;
+    private int gameLastRayPainted=0;
     private static boolean isFirstTime=true;
 
     private  final Board board;
@@ -33,6 +35,7 @@ public class GraphicBoard extends JFrame{
         }
         else {
             paintRays(initialx, initialy, g);
+            paintRayMarkers(g);
         }
     }
 
@@ -245,6 +248,158 @@ public class GraphicBoard extends JFrame{
         g2d.draw(path);
     }
 
+
+
+    public void paintRayMarkers(Graphics g){
+        ArrayList<ArrayList<Integer>> raysArray = board.getAllRays();
+        Graphics2D g2d=(Graphics2D) g.create();
+
+        double xf, yf, xl, yl;
+
+
+
+        ArrayList<Integer> ray = raysArray.getLast();
+
+        xf = initialXPos + getXdiff(ray.getFirst()) + 25;
+        yf = initialYPos + (board.getAllCells().get(ray.getFirst()).getRow() - 1) * YMOD + 50.0;
+        xl = initialXPos + getXdiff(ray.getLast()) + 25;
+        yl = initialYPos + (board.getAllCells().get(ray.getLast()).getRow() - 1) * YMOD + 50.0;
+
+        System.out.println("xf="+xf+", yf="+yf+", xl="+xl+", yl="+yl);
+
+
+
+        switch(getRayCellSide()){
+            case 0:
+                xf+=XMOD;
+                yf-=50;break;
+            case 1:
+                xf+=XMOD;break;
+            case 2:
+                xf+=XMOD;
+                yf+=50;break;
+            case 3:
+                xf-=XMOD;
+                yf+=50;break;
+            case 4:
+                xf-=XMOD;break;
+            default:
+                xf-=XMOD;
+                yf-=50;break;
+
+        }
+
+        g.drawString("HI", (int) xf, (int) yf);
+
+        //if its absorbed
+        if(xf==yl){
+            return;
+        }
+        if(isOuter(ray.getLast())){
+            switch(oppositeSide(getRayCellSide())){
+                case 0:
+                    xl+=XMOD;
+                    yl-=50;break;
+                case 1:
+                    xl+=XMOD;break;
+                case 2:
+                    xl+=XMOD;
+                    yl+=50;break;
+                case 3:
+                    xl-=XMOD;
+                    yl+=50;break;
+                case 4:
+                    xl-=XMOD;break;
+                default:
+                    xl-=XMOD;
+                    yl-=50;break;
+
+            }
+            g.drawString("HI", (int) xl, (int) yl);
+        }
+
+
+
+        if(raysArray.size()-gameLastRayPainted!=1){
+            ray=raysArray.get(gameLastRayPainted);
+
+            int ind=ray.getLast();
+            if(!isOuter(ind))return;
+
+            xf = initialXPos + getXdiff(ray.getFirst()) + 25;
+            yf = initialYPos + (board.getAllCells().get(ray.getFirst()).getRow() - 1) * YMOD + 50.0;
+            xl = initialXPos + getXdiff(ray.getLast()) + 25;
+            yl = initialYPos + (board.getAllCells().get(ray.getLast()).getRow() - 1) * YMOD + 50.0;
+
+
+
+            switch(calcExitRayCellSide(xf, yf, xl, yl)){
+                case 0:
+                    xl+=XMOD;
+                    yl-=50;break;
+                case 1:
+                    xl+=XMOD;break;
+                case 2:
+                    xl+=XMOD;
+                    yl+=50;break;
+                case 3:
+                    xl-=XMOD;
+                    yl+=50;break;
+                case 4:
+                    xl-=XMOD;break;
+                default:
+                    xl-=XMOD;
+                    yl-=50;break;
+
+            }
+
+            g.drawString("HI", (int) xl, (int) yl);
+
+            System.out.println("xf="+xf+", yf="+yf+", xl="+xl+", yl="+yl);
+            //System.out.println(result);
+        }
+
+        gameLastRayPainted=raysArray.size();
+        g2d.dispose();
+    }
+
+
+
+    public void setRayCellSide(int side){
+        rayCellSide=side;
+    }
+    public int getRayCellSide(){
+        return this.rayCellSide;
+    }
+
+    private int calcExitRayCellSide(double xf, double yf, double xl, double yl){
+        if(xf<xl && yf>yl)return 0;
+        if(xf<xl && yf==yl)return 1;
+        if(xf<xl && yf<yl)return 2;
+        if(xf>xl && yf<yl)return 3;
+        if(xf>xl && yf==yl)return 4;
+        if(xf>xl && yf>yl)return 5;
+        else throw new IllegalArgumentException("Error");
+    }
+
+    private boolean isOuter(int ind){
+        int[] validCells = {0,1,2,3,4,5,10,11,17,18,25,26,34,35,42,43,49,50,55,56,57,58,59,60};
+        for (int i=0;i<validCells.length;i++) {
+            if (ind == validCells[i]) return true;
+        }
+        return false;
+    }
+
+    private int oppositeSide(int side){
+        if(side==0)return 3;
+        if(side==1)return 4;
+        if(side==2)return 5;
+        if(side==3)return 0;
+        if(side==4)return 1;
+        else return 2;
+    }
+
+
     public void setIsFirstTime(){
         isFirstTime=false;
     }
@@ -253,7 +408,7 @@ public class GraphicBoard extends JFrame{
 
     public void cellNumbers(Graphics g){
         int x=(int)initialXPos;
-        int y=(int)initalYPos;
+        int y=(int)initialYPos;
 
 
         double xmod=XMOD, ymod=YMOD;
