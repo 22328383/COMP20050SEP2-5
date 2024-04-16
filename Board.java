@@ -425,6 +425,9 @@ public class Board implements Serializable {
     // simulates ray propagation by recursively applying rules until termination
     public void addRay(int idx, int side) {
         checkIndex(idx);
+        if(allCells.get(idx).hasAtom()) {
+            return;
+        }
 
         int[] pos = getCoordinates(idx);
         int x = pos[0];
