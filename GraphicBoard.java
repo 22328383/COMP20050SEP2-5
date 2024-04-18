@@ -11,8 +11,10 @@ public class GraphicBoard extends JFrame{
     private static final double YMOD=75.0;
 
     private int lastRayPainted=0;
+    private int rayMarkerSetsPrinted=0;
     private int rayCellSide;
     private int gameLastRayPainted=0;
+    private int backup;
     private static boolean isFirstTime=true;
 
     private  final Board board;
@@ -27,14 +29,14 @@ public class GraphicBoard extends JFrame{
 
     public void paint(Graphics g){
         double initialx=300.0, initialy=200.0;
-        if(isFirstTime) {
-            paintExampleHexagon(g);
-            paintHexagons(initialx, initialy, g);
-            paintAtoms(initialx, initialy, g);
-            cellNumbers(g);
-        }
-        else {
-            paintRays(initialx, initialy, g);
+
+        paintExampleHexagon(g);
+        paintHexagons(initialx, initialy, g);
+        //paintAtoms(initialx, initialy, g);
+        cellNumbers(g);
+
+        if(!isFirstTime) {
+            //paintRays(initialx, initialy, g);
             paintRayMarkers(g);
         }
     }
@@ -155,9 +157,6 @@ public class GraphicBoard extends JFrame{
             }
         }
 
-
-
-
         g2d.dispose();
     }
 
@@ -256,7 +255,12 @@ public class GraphicBoard extends JFrame{
 
         double xf, yf, xl, yl;
 
-
+        boolean repaint=false;
+        if(gameLastRayPainted==raysArray.size()){
+            gameLastRayPainted=backup;
+            rayMarkerSetsPrinted--;
+            repaint=true;
+        }
 
         ArrayList<Integer> ray = raysArray.getLast();
 
@@ -265,66 +269,77 @@ public class GraphicBoard extends JFrame{
         xl = initialXPos + getXdiff(ray.getLast()) + 25;
         yl = initialYPos + (board.getAllCells().get(ray.getLast()).getRow() - 1) * YMOD + 50.0;
 
-        System.out.println("xf="+xf+", yf="+yf+", xl="+xl+", yl="+yl);
 
 
+        Color c1=markerColor(rayMarkerSetsPrinted);
+        Color c2=c1;
+
+        //System.out.println("There are "+raysArray.size()+" ray(s) in the array");
+        //System.out.println("Current ray (ray.getFirst()) starts at "+ray.getFirst()+", and ends at (ray.getLast()) "+ray.getLast());
 
         switch(getRayCellSide()){
             case 0:
-                xf+=XMOD;
+                xf+=XMOD-10;
                 yf-=50;break;
             case 1:
-                xf+=XMOD;break;
+                xf+=XMOD+10;break;
             case 2:
-                xf+=XMOD;
+                xf+=XMOD-10;
                 yf+=50;break;
             case 3:
-                xf-=XMOD;
+                xf-=XMOD-10;
                 yf+=50;break;
             case 4:
-                xf-=XMOD;break;
+                xf-=XMOD+10;break;
             default:
-                xf-=XMOD;
+                xf-=XMOD-10;
                 yf-=50;break;
 
         }
 
-        g.drawString("HI", (int) xf, (int) yf);
+
+        //System.out.println("size="+raysArray.size()+", ray.getFirst()"+ray.getFirst()+ ", ray.getLast()="+ray.getLast());
 
         //if its absorbed
-        if(xf==yl){
+        if(raysArray.size()-gameLastRayPainted==1 && !isOuter(ray.getLast())){
+            warningShape((int) xf, (int) yf, g2d);
+            gameLastRayPainted=raysArray.size();
             return;
         }
+
+
         if(isOuter(ray.getLast())){
             switch(oppositeSide(getRayCellSide())){
                 case 0:
-                    xl+=XMOD;
+                    xl+=XMOD-10;
                     yl-=50;break;
                 case 1:
-                    xl+=XMOD;break;
+                    xl+=XMOD+10;break;
                 case 2:
-                    xl+=XMOD;
+                    xl+=XMOD-10;
                     yl+=50;break;
                 case 3:
-                    xl-=XMOD;
+                    xl-=XMOD-10;
                     yl+=50;break;
                 case 4:
-                    xl-=XMOD;break;
+                    xl-=XMOD+10;break;
                 default:
-                    xl-=XMOD;
+                    xl-=XMOD-10;
                     yl-=50;break;
 
             }
-            g.drawString("HI", (int) xl, (int) yl);
-        }
 
+        }
+        double xEnterPos=xf, yEnterPos=yf;
 
 
         if(raysArray.size()-gameLastRayPainted!=1){
             ray=raysArray.get(gameLastRayPainted);
 
-            int ind=ray.getLast();
-            if(!isOuter(ind))return;
+
+            if(!isOuter(ray.getLast())){
+                c2=Color.WHITE;
+            }
 
             xf = initialXPos + getXdiff(ray.getFirst()) + 25;
             yf = initialYPos + (board.getAllCells().get(ray.getFirst()).getRow() - 1) * YMOD + 50.0;
@@ -335,31 +350,45 @@ public class GraphicBoard extends JFrame{
 
             switch(calcExitRayCellSide(xf, yf, xl, yl)){
                 case 0:
-                    xl+=XMOD;
+                    xl+=XMOD-10;
                     yl-=50;break;
                 case 1:
-                    xl+=XMOD;break;
+                    xl+=XMOD+10;break;
                 case 2:
-                    xl+=XMOD;
+                    xl+=XMOD-10;
                     yl+=50;break;
                 case 3:
-                    xl-=XMOD;
+                    xl-=XMOD-10;
                     yl+=50;break;
                 case 4:
-                    xl-=XMOD;break;
+                    xl-=XMOD+10;break;
                 default:
-                    xl-=XMOD;
+                    xl-=XMOD-10;
                     yl-=50;break;
 
             }
 
-            g.drawString("HI", (int) xl, (int) yl);
-
-            System.out.println("xf="+xf+", yf="+yf+", xl="+xl+", yl="+yl);
-            //System.out.println(result);
+        }
+        if(rayMarkerSetsPrinted%3==0){
+            xShape((int)xEnterPos, (int)yEnterPos, c1, g2d);
+            xShape((int)xl, (int)yl, c2, g2d);
+        }
+        else if(rayMarkerSetsPrinted%3==1){
+            squareShape((int)xEnterPos, (int)yEnterPos, c1, g2d);
+            squareShape((int)xl, (int)yl, c2, g2d);
+        }
+        else{
+            circleShape((int)xEnterPos, (int)yEnterPos, c1, g2d);
+            circleShape((int)xl, (int)yl, c2, g2d);
         }
 
+        rayMarkerSetsPrinted++;
+
+        if(!repaint){
+            backup=gameLastRayPainted;
+        }
         gameLastRayPainted=raysArray.size();
+
         g2d.dispose();
     }
 
@@ -379,7 +408,7 @@ public class GraphicBoard extends JFrame{
         if(xf>xl && yf<yl)return 3;
         if(xf>xl && yf==yl)return 4;
         if(xf>xl && yf>yl)return 5;
-        else throw new IllegalArgumentException("Error");
+        else throw new IllegalArgumentException("Error"+xf+" "+yf+" "+xl+" "+yl);
     }
 
     private boolean isOuter(int ind){
@@ -398,6 +427,69 @@ public class GraphicBoard extends JFrame{
         if(side==4)return 1;
         else return 2;
     }
+
+
+    private void xShape(int x, int y, Color c, Graphics2D g2d){
+        g2d.setColor(c);
+        Path2D path= new Path2D.Double();
+        g2d.setStroke(new BasicStroke(3f));
+        path.moveTo(x-5, y-5);
+        path.lineTo(x+5, y+5);
+        path.moveTo(x+5, y-5);
+        path.lineTo(x-5, y+5);
+        path.closePath();
+        g2d.draw(path);
+    }
+
+    private void squareShape(int x, int y, Color c, Graphics2D g2d){
+        g2d.setColor(c);
+        Path2D path= new Path2D.Double();
+        g2d.setStroke(new BasicStroke(3f));
+        path.moveTo(x-5, y-5);
+        path.lineTo(x+5, y-5);
+        path.lineTo(x+5, y+5);
+        path.lineTo(x-5, y+5);
+        path.lineTo(x-5, y-5);
+        path.closePath();
+        g2d.draw(path);
+
+    }
+    private void circleShape(int x, int y, Color c, Graphics2D g2d){
+        g2d.setColor(c);
+        g2d.setStroke(new BasicStroke(3f));
+        g2d.fill( new Ellipse2D.Double(x, y, 15, 15));
+
+
+    }
+
+    private void warningShape(int x, int y, Graphics2D g2d){
+        g2d.setColor(Color.RED);
+        Path2D path= new Path2D.Double();
+
+        path.moveTo(x, y-10);
+        path.lineTo(x+6, y+4);
+        path.lineTo(x-6, y+4);
+        path.lineTo(x, y-10);
+        path.moveTo(x, y-7);
+        path.lineTo(x, y+1);
+        path.moveTo(x, y+2);
+        path.lineTo(x, y+2);
+        path.closePath();
+        g2d.draw(path);
+
+    }
+
+
+    private Color markerColor(int a){
+        Color[] colours={Color.BLUE, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.DARK_GRAY};
+        return colours[a%5];
+    }
+
+
+
+
+
+
 
 
     public void setIsFirstTime(){

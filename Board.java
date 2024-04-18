@@ -426,6 +426,9 @@ public class Board implements Serializable {
     public void addRay(int idx, int side) {
         checkIndex(idx);
         if(allCells.get(idx).hasAtom()) {
+            ArrayList<Integer> newRay = new ArrayList<>();
+            newRay.add(idx);
+            allRays.add(newRay);
             return;
         }
 
