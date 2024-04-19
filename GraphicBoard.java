@@ -32,7 +32,7 @@ public class GraphicBoard extends JFrame{
 
         paintExampleHexagon(g);
         paintHexagons(initialx, initialy, g);
-        //paintAtoms(initialx, initialy, g);
+        paintAtoms(initialx, initialy, g);
         cellNumbers(g);
 
         if(!isFirstTime) {
@@ -274,8 +274,8 @@ public class GraphicBoard extends JFrame{
         Color c1=markerColor(rayMarkerSetsPrinted);
         Color c2=c1;
 
-        //System.out.println("There are "+raysArray.size()+" ray(s) in the array");
-        //System.out.println("Current ray (ray.getFirst()) starts at "+ray.getFirst()+", and ends at (ray.getLast()) "+ray.getLast());
+        System.out.println("There are "+raysArray.size()+" ray(s) in the array");
+        System.out.println("Current ray (ray.getFirst()) starts at "+ray.getFirst()+", and ends at (ray.getLast()) "+ray.getLast());
 
         switch(getRayCellSide()){
             case 0:
@@ -336,6 +336,7 @@ public class GraphicBoard extends JFrame{
         if(raysArray.size()-gameLastRayPainted!=1){
             ray=raysArray.get(gameLastRayPainted);
 
+            System.out.println("Current ray (ray.getFirst()) starts at "+ray.getFirst()+", and ends at (ray.getLast()) "+ray.getLast());
 
             if(!isOuter(ray.getLast())){
                 c2=Color.WHITE;
