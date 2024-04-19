@@ -5,6 +5,8 @@ public class Main {
     static int[] atomNums = new int[3]; // Keeps track of where atoms are.
     static int rayCount; // Keeps track of the number of rays a user has added.
 
+
+
     public static void mainMenu() { // Allows the user to start the game or to exit the program.
         System.out.println("Welcome To Black Box!\nPlease type START to begin or QUIT to end the program.");
         Scanner scanner = new Scanner(System.in);
@@ -78,7 +80,7 @@ public class Main {
                 System.exit(0);
                 break;
             case "GUESS": // Takes user to the guessAtoms method.
-                guessAtoms(scanner);
+                guessAtoms(scanner, gb);
                 break;
             default:
                 System.out.println("\nInvalid input detected.\n");
@@ -195,7 +197,7 @@ public class Main {
         return null;
     }
 
-    public static void guessAtoms(Scanner scanner) { // User guesses three cells where they think the atom is. Doesn't allow duplicate guesses, or invalid ones.
+    public static void guessAtoms(Scanner scanner, GraphicBoard gb) { // User guesses three cells where they think the atom is. Doesn't allow duplicate guesses, or invalid ones.
         int i = 0;
         int guessInput;
         int wrongGuesses = 0;
@@ -243,13 +245,14 @@ public class Main {
             i++;
             flag = false;
         }
-        displayScore(wrongGuesses);
+        displayScore(wrongGuesses, gb);
     }
 
-    public static void displayScore (int wrongGuesses) { // Shows the score for the board.
+    public static void displayScore (int wrongGuesses, GraphicBoard gb) { // Shows the score for the board.
         int score = wrongGuesses * 5; // A wrong guess is worth 5 points.
         score += rayCount; // Each ray is worth one.
         System.out.println("\nYour final score for this board is " + score);
+        gb.afterGamePaintAtom();
         mainMenu(); // Goes back to main menu should the user wish to play again.
     }
 
