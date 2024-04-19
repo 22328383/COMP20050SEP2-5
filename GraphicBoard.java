@@ -32,7 +32,7 @@ public class GraphicBoard extends JFrame{
 
         paintExampleHexagon(g);
         paintHexagons(initialx, initialy, g);
-        paintAtoms(initialx, initialy, g);
+        //paintAtoms(initialx, initialy, g);
         cellNumbers(g);
 
         if(!isFirstTime) {
@@ -41,6 +41,7 @@ public class GraphicBoard extends JFrame{
         }
     }
 
+    //Example hexagon for user to input
     public void paintExampleHexagon(Graphics g){
         Path2D.Double poly;
         double []xarr= fillxArray(100);
@@ -65,7 +66,7 @@ public class GraphicBoard extends JFrame{
         g.drawString("5", 79, 107);
     }
 
-
+    //used for painting hexagon board
     public double[] fillxArray(double top){
         double[] arr = new double[6];
 
@@ -79,6 +80,7 @@ public class GraphicBoard extends JFrame{
 
         return arr;
     }
+    //used for painting hexagon board
     public double[] fillyArray(double top){
         double [] arr = new double[6];
 
@@ -91,6 +93,7 @@ public class GraphicBoard extends JFrame{
 
         return arr;
     }
+    //used for painting hexagon board, one row at a time
     public void drawRow(double initialxTop, double initialyTop, int numHex, Graphics g){
         Path2D.Double poly;
         double val = 2*XMOD;
@@ -108,7 +111,7 @@ public class GraphicBoard extends JFrame{
             g2d.dispose();
         }
     }
-
+    //logic to paint hexagon board
     public void paintHexagons(double initialx, double initaly, Graphics g){
         double xmod=XMOD, ymod=YMOD;
         boolean isHalfway=false;
@@ -126,7 +129,7 @@ public class GraphicBoard extends JFrame{
             i = modifyi(i, isHalfway);
         }
     }
-
+    //used in logic
     public int modifyi(int i, boolean isHalfway){
         if(isHalfway){
             i--;
@@ -138,7 +141,7 @@ public class GraphicBoard extends JFrame{
 
 
 
-
+    //used for debug
     public void paintAtoms(double initialx, double initialy, Graphics g){
         Graphics2D g2d= (Graphics2D) g.create();
 
@@ -159,11 +162,11 @@ public class GraphicBoard extends JFrame{
 
         g2d.dispose();
     }
-
+    //also used for debug
     private void drawCircleOfInf(double x, double y, double w, Graphics2D g2d) {
         g2d.draw(new Ellipse2D.Double(x-50, y-50, w+100, w+100));
     }
-
+    //used for converting cell number to x coordinate position
     private double getXdiff(int i) {
         int first=0;
         double distance=0;
@@ -207,6 +210,7 @@ public class GraphicBoard extends JFrame{
 
     }
 
+    //pains atom
     public void drawAtom(double x, double y, double w, Graphics2D g2d){
         g2d.fill( new Ellipse2D.Double(x, y, w, w));
     }
@@ -217,7 +221,8 @@ public class GraphicBoard extends JFrame{
 
 
 
-
+    //used for debug
+    //logic for printing rays
     public void paintRays(double initialx, double initialy, Graphics g) {
         ArrayList<ArrayList<Integer>> raysArray = board.getAllRays();
         Graphics2D g2d=(Graphics2D) g.create();
@@ -238,7 +243,7 @@ public class GraphicBoard extends JFrame{
         lastRayPainted= raysArray.size();
         g2d.dispose();
     }
-
+    //paint individual ray
     public void drawRay(double xf, double yf, double xl, double yl, Graphics2D g2d){
         Path2D.Double path= new Path2D.Double();
         path.moveTo(xf, yf);
@@ -248,7 +253,7 @@ public class GraphicBoard extends JFrame{
     }
 
 
-
+    //paints each new set of ray markers
     public void paintRayMarkers(Graphics g){
         ArrayList<ArrayList<Integer>> raysArray = board.getAllRays();
         Graphics2D g2d=(Graphics2D) g.create();
@@ -269,13 +274,12 @@ public class GraphicBoard extends JFrame{
         xl = initialXPos + getXdiff(ray.getLast()) + 25;
         yl = initialYPos + (board.getAllCells().get(ray.getLast()).getRow() - 1) * YMOD + 50.0;
 
-
+        //ENTRY RAY LOCATION
 
         Color c1=markerColor(rayMarkerSetsPrinted);
         Color c2=c1;
 
-        System.out.println("There are "+raysArray.size()+" ray(s) in the array");
-        System.out.println("Current ray (ray.getFirst()) starts at "+ray.getFirst()+", and ends at (ray.getLast()) "+ray.getLast());
+
 
         switch(getRayCellSide()){
             case 0:
@@ -298,16 +302,17 @@ public class GraphicBoard extends JFrame{
         }
 
 
-        //System.out.println("size="+raysArray.size()+", ray.getFirst()"+ray.getFirst()+ ", ray.getLast()="+ray.getLast());
 
-        //if its absorbed
-        if(raysArray.size()-gameLastRayPainted==1 && !isOuter(ray.getLast())){
+
+        //IF ITS ABSORBED OR REFLECTED
+        if(raysArray.size()-gameLastRayPainted==1 && (!isOuter(ray.getLast()) || ray.getFirst()==ray.getLast())){
             warningShape((int) xf, (int) yf, g2d);
+            if(!repaint)backup=gameLastRayPainted;
             gameLastRayPainted=raysArray.size();
             return;
         }
 
-
+        //IF ITS SINGLE RAY IN AND OUT FINE
         if(isOuter(ray.getLast())){
             switch(oppositeSide(getRayCellSide())){
                 case 0:
@@ -330,13 +335,13 @@ public class GraphicBoard extends JFrame{
             }
 
         }
-        double xEnterPos=xf, yEnterPos=yf;
+        double xEnterPos=xf, yEnterPos=yf, xExitPos=xl;
 
 
         if(raysArray.size()-gameLastRayPainted!=1){
             ray=raysArray.get(gameLastRayPainted);
 
-            System.out.println("Current ray (ray.getFirst()) starts at "+ray.getFirst()+", and ends at (ray.getLast()) "+ray.getLast());
+
 
             if(!isOuter(ray.getLast())){
                 c2=Color.WHITE;
@@ -346,6 +351,8 @@ public class GraphicBoard extends JFrame{
             yf = initialYPos + (board.getAllCells().get(ray.getFirst()).getRow() - 1) * YMOD + 50.0;
             xl = initialXPos + getXdiff(ray.getLast()) + 25;
             yl = initialYPos + (board.getAllCells().get(ray.getLast()).getRow() - 1) * YMOD + 50.0;
+
+            if(xf==xl)xf=xExitPos;
 
 
 
@@ -394,7 +401,7 @@ public class GraphicBoard extends JFrame{
     }
 
 
-
+    //makes it easier to set initial ray marker
     public void setRayCellSide(int side){
         rayCellSide=side;
     }
@@ -402,6 +409,7 @@ public class GraphicBoard extends JFrame{
         return this.rayCellSide;
     }
 
+    //calculates the exit ray cell side based on the ray direction
     private int calcExitRayCellSide(double xf, double yf, double xl, double yl){
         if(xf<xl && yf>yl)return 0;
         if(xf<xl && yf==yl)return 1;
@@ -411,7 +419,7 @@ public class GraphicBoard extends JFrame{
         if(xf>xl && yf>yl)return 5;
         else throw new IllegalArgumentException("Error"+xf+" "+yf+" "+xl+" "+yl);
     }
-
+    //checks if the location of the ray is an outer cell
     private boolean isOuter(int ind){
         int[] validCells = {0,1,2,3,4,5,10,11,17,18,25,26,34,35,42,43,49,50,55,56,57,58,59,60};
         for (int i=0;i<validCells.length;i++) {
@@ -419,7 +427,7 @@ public class GraphicBoard extends JFrame{
         }
         return false;
     }
-
+    //returns opposite side of hexagon
     private int oppositeSide(int side){
         if(side==0)return 3;
         if(side==1)return 4;
@@ -429,8 +437,9 @@ public class GraphicBoard extends JFrame{
         else return 2;
     }
 
-
+    //paints an x shaped ray marker
     private void xShape(int x, int y, Color c, Graphics2D g2d){
+        if(c==Color.WHITE)return;
         g2d.setColor(c);
         Path2D path= new Path2D.Double();
         g2d.setStroke(new BasicStroke(3f));
@@ -441,8 +450,9 @@ public class GraphicBoard extends JFrame{
         path.closePath();
         g2d.draw(path);
     }
-
+    //paints a square shaped ray marker
     private void squareShape(int x, int y, Color c, Graphics2D g2d){
+        if(c==Color.WHITE)return;
         g2d.setColor(c);
         Path2D path= new Path2D.Double();
         g2d.setStroke(new BasicStroke(3f));
@@ -455,14 +465,16 @@ public class GraphicBoard extends JFrame{
         g2d.draw(path);
 
     }
+    //paints a circle shaped ray marker
     private void circleShape(int x, int y, Color c, Graphics2D g2d){
+        if(c==Color.WHITE)return;
         g2d.setColor(c);
         g2d.setStroke(new BasicStroke(3f));
-        g2d.fill( new Ellipse2D.Double(x, y, 15, 15));
+        g2d.fill( new Ellipse2D.Double(x-5, y-5, 15, 15));
 
 
     }
-
+    //paints a warning shaped ray marker
     private void warningShape(int x, int y, Graphics2D g2d){
         g2d.setColor(Color.RED);
         Path2D path= new Path2D.Double();
@@ -480,7 +492,7 @@ public class GraphicBoard extends JFrame{
 
     }
 
-
+    //chooses a ray marker colour based on how many ray marker sets
     private Color markerColor(int a){
         Color[] colours={Color.BLUE, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.DARK_GRAY};
         return colours[a%5];
@@ -499,6 +511,8 @@ public class GraphicBoard extends JFrame{
 
 
 
+
+    //draws the number of each cell on the board
     public void cellNumbers(Graphics g){
         int x=(int)initialXPos;
         int y=(int)initialYPos;

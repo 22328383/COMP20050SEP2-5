@@ -373,15 +373,22 @@ public class Board implements Serializable {
             if((enteringSide == 0)) {
                 int testingIdx = topRight(idx, x, y);
                 if(testingIdx < 0) {
+                    // forbidden side
                     if(allCells.get(idx).atomSideToClockwise().get(5) > 0) {
                         return -1;
                     }
                     if(opposite > 0) {
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                        if(left(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(left(idx, x, y), (enteringSide+1)%6);
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide-2+6)%6))) == 1) {
+                        if(botRight(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(botRight(idx, x, y), (enteringSide-1+6)%6);
                         return -1;
                     }
@@ -397,9 +404,15 @@ public class Board implements Serializable {
                     if(opposite > 0) {
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                        if(topLeft(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(topLeft(idx, x, y), (enteringSide+1)%6);
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide-2+6)%6))) == 1) {
+                        if(botLeft(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(botLeft(idx, x, y), (enteringSide-1+6)%6);
                         return -1;
                     }
@@ -414,9 +427,15 @@ public class Board implements Serializable {
                     if(opposite > 0) {
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                        if(topRight(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(topRight(idx, x, y), (enteringSide+1)%6);
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide-2+6)%6))) == 1) {
+                        if(left(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(left(idx, x, y), (enteringSide-1+6)%6);
                         return -1;
                     }
@@ -431,10 +450,15 @@ public class Board implements Serializable {
                     if(opposite > 0) {
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                        if(right(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(right(idx, x, y), (enteringSide+1)%6);
-
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide-2+6)%6))) == 1) {
+                        if(topLeft(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(topLeft(idx, x, y), (enteringSide-1+6)%6);
                         return -1;
                     }
@@ -449,9 +473,15 @@ public class Board implements Serializable {
                     if(opposite > 0) {
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                        if(botRight(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(botRight(idx, x, y), (enteringSide+1)%6);
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide-2+6)%6))) == 1) {
+                        if(topRight(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(topRight(idx, x, y), (enteringSide-1+6)%6);
                         return -1;
                     }
@@ -466,9 +496,15 @@ public class Board implements Serializable {
                     if(opposite > 0) {
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide+2)%6))) == 1) {
+                        if(botLeft(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(botLeft(idx, x, y), (enteringSide+1)%6);
                         return -1;
                     } else if ((allCells.get(idx).atomSideToClockwise().get(((enteringSide-2+6)%6))) == 1) {
+                        if(right(idx, x, y) == -1) {
+                            return -1;
+                        }
                         addRay(right(idx, x, y), (enteringSide-1+6)%6);
                         return -1;
                     }
