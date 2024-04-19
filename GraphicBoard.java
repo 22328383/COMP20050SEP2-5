@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
@@ -10,12 +11,14 @@ public class GraphicBoard extends JFrame{
     private static final double XMOD=25*Math.pow(3, 0.5);
     private static final double YMOD=75.0;
 
+    private boolean isGameOver=false;
     private int lastRayPainted=0;
     private int rayMarkerSetsPrinted=0;
     private int rayCellSide;
     private int gameLastRayPainted=0;
     private int backup;
-    private static boolean isFirstTime=true;
+    private ArrayList<Integer> rayMarkersBeginnings=new ArrayList<Integer>();
+    private boolean isFirstTime=true;
 
     private  final Board board;
     public GraphicBoard(Board board){
@@ -38,6 +41,9 @@ public class GraphicBoard extends JFrame{
         if(!isFirstTime) {
             //paintRays(initialx, initialy, g);
             paintRayMarkers(g);
+        }
+        if(isGameOver){
+            paintAtoms(initialx, initialy, g);
         }
     }
 
@@ -266,6 +272,7 @@ public class GraphicBoard extends JFrame{
             rayMarkerSetsPrinted--;
             repaint=true;
         }
+        else rayMarkersBeginnings.add(gameLastRayPainted);
 
         ArrayList<Integer> ray = raysArray.getLast();
 
@@ -498,6 +505,11 @@ public class GraphicBoard extends JFrame{
         return colours[a%5];
     }
 
+
+    public void afterGamePaintAtom(){
+        isGameOver=true;
+        repaint();
+    }
 
 
 
