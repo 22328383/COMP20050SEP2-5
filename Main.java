@@ -37,7 +37,7 @@ public class Main {
         boolean flag = false; // Flag set to true when a duplicate is detected.
         Random random = new Random();
         for (int i=0;i<3;i++) {
-            int number = random.nextInt(60) + 1;
+            int number = random.nextInt(60);
             for (int j=0;j<3;j++) {
                 if (number == currentAtoms[j]) {
                     flag = true;
@@ -47,6 +47,7 @@ public class Main {
             if (flag == false) {
                 userBoard.setAtom(number);
                 atomNums[i] = number;
+                currentAtoms[i] = number;
             }
             else {
                 i--;
