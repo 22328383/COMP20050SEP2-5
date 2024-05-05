@@ -4,6 +4,11 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.*;
 import java.util.ArrayList;
 
+/**
+ * The graphical representation of the Black Box+ game.
+
+ */
+
 public class GraphicBoard extends JFrame{
 
     private static final double initialXPos=300.0;
@@ -21,6 +26,14 @@ public class GraphicBoard extends JFrame{
     private boolean isFirstTime=true;
 
     private  final Board board;
+
+    /**
+     * The constructor for the graphic board.
+     *
+     *
+     * @param board the board logic for the game is stored here
+     */
+
     public GraphicBoard(Board board){
         this.board=board;
         setSize(1000,1000);
@@ -31,23 +44,27 @@ public class GraphicBoard extends JFrame{
         setTitle("Black Box+");
         setIconImage(new ImageIcon("images/blackbox+icon.png").getImage());
         setAlwaysOnTop(true);
-        JToolBar toolBar= new JToolBar();
-        //toolbar.set
-
     }
 
-
+    /**
+     * All the separate components of the graphic board are painted from here.
+     * It paints:
+     *              the example cell with the labeled sides,
+     *              the cells making up the board,
+     *              the cell number of each cell,
+     *              the ray markers,
+     *              the atoms once the game is over
+     * @param g the specified Graphics window
+     */
     public void paint(Graphics g){
         double initialx=300.0, initialy=200.0;
         g.setColor(Color.YELLOW);
 
         paintExampleHexagon(g);
         paintHexagons(initialx, initialy, g);
-        //paintAtoms(initialx, initialy, g);
         cellNumbers(g);
 
         if(!isFirstTime) {
-            //paintRays(initialx, initialy, g);
             paintRayMarkers(g);
         }
         if(isGameOver){
@@ -55,6 +72,10 @@ public class GraphicBoard extends JFrame{
         }
     }
 
+    /**
+     * Paints the example cell in the top corner of the window to show the user how the sides are labelled
+     * @param g the specified Graphics window
+     */
     //Example hexagon for user to input
     public void paintExampleHexagon(Graphics g){
         Path2D.Double poly;
@@ -64,7 +85,6 @@ public class GraphicBoard extends JFrame{
         poly.moveTo(100, 100);
         for(int j=1;j<6;j++){
             poly.lineTo(xarr[j], yarr[j]);
-
         }
         poly.closePath();
 
@@ -80,6 +100,11 @@ public class GraphicBoard extends JFrame{
         g.drawString("5", 79, 107);
     }
 
+    /**
+     * Calculates the x-coordinates of all the points of the cell
+     * @param top the x-coordinate of the top point of the cell
+     * @return array containing the x-coordinates for all the points of the cell
+     */
     //used for painting hexagon board
     public double[] fillxArray(double top){
         double[] arr = new double[6];
@@ -94,6 +119,12 @@ public class GraphicBoard extends JFrame{
 
         return arr;
     }
+
+    /**
+     * Calculates the y-coordinates of all the points of the cell
+     * @param top the y-coordinate of the top point of the cell
+     * @return array containing the y-coordinates for all the points of the cell
+     */
     //used for painting hexagon board
     public double[] fillyArray(double top){
         double [] arr = new double[6];
@@ -107,6 +138,14 @@ public class GraphicBoard extends JFrame{
 
         return arr;
     }
+
+    /**
+     * Draws a row of cells on to the board
+     * @param initialxTop The x-coordinate of the top point of the first cell in the row
+     * @param initialyTop The y-coordinate of the top point of the first cell in the row
+     * @param numHex The number of cells to draw on to the board
+     * @param g the specified Graphics window
+     */
     //used for painting hexagon board, one row at a time
     public void drawRow(double initialxTop, double initialyTop, int numHex, Graphics g){
         Path2D.Double poly;
@@ -126,6 +165,13 @@ public class GraphicBoard extends JFrame{
             g2d.dispose();
         }
     }
+
+    /**
+     * Calculates the coordinates for the leftmost cells of the board and draws the board row by row
+     * @param initialx The initial x-coordinate to place the board
+     * @param initaly The inital y-coordinate to place the board
+     * @param g the specified Graphics window
+     */
     //logic to paint hexagon board
     public void paintHexagons(double initialx, double initaly, Graphics g){
         double xmod=XMOD, ymod=YMOD;
@@ -144,6 +190,13 @@ public class GraphicBoard extends JFrame{
             i = modifyi(i, isHalfway);
         }
     }
+
+    /**
+     * Calculates how many cells to draw per row
+     * @param i Value that determines how many cells are drawn per row
+     * @param isHalfway Boolean value representing if half the board has been drawn already
+     * @return A modified i value
+     */
     //used in logic
     public int modifyi(int i, boolean isHalfway){
         if(isHalfway){
@@ -154,9 +207,12 @@ public class GraphicBoard extends JFrame{
     }
 
 
-
-
-    //used for debug
+    /**
+     * Draws atoms on to the board
+     * @param initialx The initial x-coordinate of the top of the board
+     * @param initialy The initial y-coordinate of the top of the board
+     * @param g the specified Graphics window
+     */
     public void paintAtoms(double initialx, double initialy, Graphics g){
         Graphics2D g2d= (Graphics2D) g.create();
 
@@ -177,10 +233,23 @@ public class GraphicBoard extends JFrame{
 
         g2d.dispose();
     }
-    //also used for debug
+
+    /**
+     * Draws the circle of influence of an atom
+     * @param x The x-coordinate of the upper left corner of the framing square of which the circle is placed
+     * @param y The y-coordinate of the upper left corner of the framing square of which the circle is placed
+     * @param w The width and height of the framing square
+     * @param g2d the specified Graphics2D window
+     */
     private void drawCircleOfInf(double x, double y, double w, Graphics2D g2d) {
         g2d.draw(new Ellipse2D.Double(x-50, y-50, w+100, w+100));
     }
+
+    /**
+     * Calculates the x-coordinate of the centre of a given cell
+     * @param i The cell number [0,1,2,...,59,60]
+     * @return the x-coordinate
+     */
     //used for converting cell number to x coordinate position
     private double getXdiff(int i) {
         int first=0;
@@ -225,17 +294,25 @@ public class GraphicBoard extends JFrame{
 
     }
 
+    /**
+     * Draws an atom
+     * @param x The x-coordinate of the upper left corner of the framing square of which the atom is placed
+     * @param y The y-coordinate of the upper left corner of the framing square of which the atom is placed
+     * @param w The width and height of the framing square
+     * @param g2d the specified Graphics2D window
+     */
     //pains atom
     public void drawAtom(double x, double y, double w, Graphics2D g2d){
         g2d.fill( new Ellipse2D.Double(x, y, w, w));
     }
 
 
-
-
-
-
-
+    /**
+     * Calculates the coordinates to draw the rays
+     * @param initialx The initial x-coordinate of the top of the board
+     * @param initialy The initial y-coordinate of the top of the board
+     * @param g the specified Graphics window
+     */
     //used for debug
     //logic for printing rays
     public void paintRays(double initialx, double initialy, Graphics g) {
@@ -246,18 +323,25 @@ public class GraphicBoard extends JFrame{
         for(int i=lastRayPainted;i<raysArray.size();i++) {
             ArrayList<Integer> ray = raysArray.get(i);
 
-
             xf = initialx + getXdiff(ray.getFirst()) + 25;
             yf = initialy + (board.getAllCells().get(ray.getFirst()).getRow() - 1) * YMOD + 50.0;
             xl = initialx + getXdiff(ray.getLast()) + 25;
             yl = initialy + (board.getAllCells().get(ray.getLast()).getRow() - 1) * YMOD + 50.0;
-
 
             drawRay(xf, yf, xl, yl, g2d);
         }
         lastRayPainted= raysArray.size();
         g2d.dispose();
     }
+
+    /**
+     * Draws a single ray segment
+     * @param xf The x-coordinate for the start of the ray
+     * @param yf The y-coordinate for the start of the ray
+     * @param xl The x-coordinate for the end of the ray
+     * @param yl The y-coordinate for the end of the ray
+     * @param g2d The specified Graphics window
+     */
     //paint individual ray
     public void drawRay(double xf, double yf, double xl, double yl, Graphics2D g2d){
         Path2D.Double path= new Path2D.Double();
@@ -267,7 +351,12 @@ public class GraphicBoard extends JFrame{
         g2d.draw(path);
     }
 
-
+    /**
+     * Draws the ray marker(s) for the most recent rays entered by the experimenter
+     *
+     *
+     * @param g The specified Graphics window
+     */
     //paints each new set of ray markers
     public void paintRayMarkers(Graphics g){
         ArrayList<ArrayList<Integer>> raysArray = board.getAllRays();
@@ -416,15 +505,31 @@ public class GraphicBoard extends JFrame{
         g2d.dispose();
     }
 
-
+    /**
+     * Sets the cell side at which the ray initially entered
+     * @param side The cell side at which the initial ray has entered
+     */
     //makes it easier to set initial ray marker
     public void setRayCellSide(int side){
         rayCellSide=side;
     }
+
+    /**
+     * Gets the cell side at which the ray initially entered
+     * @return the cell side at which the initial ray has entered
+     */
     public int getRayCellSide(){
         return this.rayCellSide;
     }
 
+    /**
+     * Calculates the cell side at which the ray exited
+     * @param xf The x-coordinate for the start of the ray
+     * @param yf The y-coordinate for the start of the ray
+     * @param xl The x-coordinate for the end of the ray
+     * @param yl The y-coordinate for the end of the ray
+     * @return the cell side at which the ray exited
+     */
     //calculates the exit ray cell side based on the ray direction
     private int calcExitRayCellSide(double xf, double yf, double xl, double yl){
         if(xf<xl && yf>yl)return 0;
@@ -435,6 +540,12 @@ public class GraphicBoard extends JFrame{
         if(xf>xl && yf>yl)return 5;
         else throw new IllegalArgumentException("Error"+xf+" "+yf+" "+xl+" "+yl);
     }
+
+    /**
+     * Checks if the given cell number is an outer cell of the board
+     * @param ind The cell number
+     * @return true if the cell is an outer cell; false if not
+     */
     //checks if the location of the ray is an outer cell
     private boolean isOuter(int ind){
         int[] validCells = {0,1,2,3,4,5,10,11,17,18,25,26,34,35,42,43,49,50,55,56,57,58,59,60};
@@ -443,6 +554,12 @@ public class GraphicBoard extends JFrame{
         }
         return false;
     }
+
+    /**
+     * Gets the opposite side of a cell from a given cell side
+     * @param side The side of which we want to get the opposite of
+     * @return the opposite side of the given side
+     */
     //returns opposite side of hexagon
     private int oppositeSide(int side){
         if(side==0)return 3;
@@ -453,6 +570,13 @@ public class GraphicBoard extends JFrame{
         else return 2;
     }
 
+    /**
+     * Draws an x-shape ray marker
+     * @param x The x-coordinate of the centre of the ray marker
+     * @param y The y-coordinate of the centre of the ray marker
+     * @param c The colour to draw the shape
+     * @param g2d The specified Graphics2D window
+     */
     //paints an x shaped ray marker
     private void xShape(int x, int y, Color c, Graphics2D g2d){
         if(c==Color.WHITE)return;
@@ -466,6 +590,13 @@ public class GraphicBoard extends JFrame{
         path.closePath();
         g2d.draw(path);
     }
+    /**
+     * Draws a square shape ray marker
+     * @param x The x-coordinate of the centre of the ray marker
+     * @param y The y-coordinate of the centre of the ray marker
+     * @param c The colour to draw the shape
+     * @param g2d The specified Graphics2D window
+     */
     //paints a square shaped ray marker
     private void squareShape(int x, int y, Color c, Graphics2D g2d){
         if(c==Color.WHITE)return;
@@ -481,6 +612,13 @@ public class GraphicBoard extends JFrame{
         g2d.draw(path);
 
     }
+    /**
+     * Draws a circle shape ray marker
+     * @param x The x-coordinate of the centre of the ray marker
+     * @param y The y-coordinate of the centre of the ray marker
+     * @param c The colour to draw the shape
+     * @param g2d The specified Graphics2D window
+     */
     //paints a circle shaped ray marker
     private void circleShape(int x, int y, Color c, Graphics2D g2d){
         if(c==Color.WHITE)return;
@@ -490,6 +628,13 @@ public class GraphicBoard extends JFrame{
 
 
     }
+
+    /**
+     * Draws a warning shape ray marker when the ray marker is either absorbed or reflected back into the side where it entered
+     * @param x The x-coordinate of the centre of the ray marker
+     * @param y The y-coordinate of the centre of the ray marker
+     * @param g2d The specified Graphics2D window
+     */
     //paints a warning shaped ray marker
     private void warningShape(int x, int y, Graphics2D g2d){
         g2d.setColor(Color.RED);
@@ -508,31 +653,38 @@ public class GraphicBoard extends JFrame{
 
     }
 
+    /**
+     * Gets the colour of which to draw the ray marker
+     * @param a Number which decides what colour to draw the ray marker
+     * @return the colour to draw the ray marker
+     */
     //chooses a ray marker colour based on how many ray marker sets
     private Color markerColor(int a){
-        Color[] colours={Color.BLUE, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.LIGHT_GRAY};
-        return colours[a%5];
+        Color[] colours={Color.BLUE, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.LIGHT_GRAY, Color.CYAN, Color.PINK};
+        return colours[a%7];
     }
 
-
+    /**
+     * Makes it so that the atoms are painted after the game is over
+     */
     public void afterGamePaintAtom(){
         isGameOver=true;
         repaint();
     }
 
 
-
-
-
-
-
+    /**
+     * This variable guards the ray markers being painted until one has been entered
+     */
     public void setIsFirstTime(){
         isFirstTime=false;
     }
 
 
-
-
+    /**
+     * Draws the cell numbers in each cell
+     * @param g the specified Graphic window
+     */
     //draws the number of each cell on the board
     public void cellNumbers(Graphics g){
         int x=(int)initialXPos;
@@ -561,9 +713,4 @@ public class GraphicBoard extends JFrame{
             i = modifyi(i, isHalfway);
         }
     }
-
-
-
-
-
 }
