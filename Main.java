@@ -2,7 +2,7 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class Main {
-    static int[] atomNums = new int[3]; // Keeps track of where atoms are.
+    static int[] atomNums = new int[6]; // Keeps track of where atoms are.
     static int rayCount; // Keeps track of the number of rays a user has added.
 
 
@@ -35,12 +35,12 @@ public class Main {
     }
 
     public static void generateAtoms(Board userBoard) { // Generates three random numbers between 0-60 and adds atoms there. Doesn't allow duplicates.
-        int[] currentAtoms = {-1,-1,-1};
+        int[] currentAtoms = {-1,-1,-1,-1,-1,-1};
         boolean flag = false; // Flag set to true when a duplicate is detected.
         Random random = new Random();
-        for (int i=0;i<3;i++) {
+        for (int i=0;i<6;i++) {
             int number = random.nextInt(60);
-            for (int j=0;j<3;j++) {
+            for (int j=0;j<6;j++) {
                 if (number == currentAtoms[j]) {
                     flag = true;
                     break;
@@ -58,8 +58,8 @@ public class Main {
         }
     }
 
-    public static void rayControl(Board userBoard, GraphicBoard gb) { // User can add rays, guess atom positions, or stop the program.
-        System.out.println("\nWould you like to ADD a ray, GUESS atom positions (will end game) or STOP the program?");
+    public static void rayControl(Board userBoard, GraphicBoard gb) { // User can add rays, guess atom positions, or quit the program.
+        System.out.println("\nWould you like to ADD a ray, GUESS atom positions (will end game) or QUIT the program?");
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine().toUpperCase();
 
@@ -75,7 +75,7 @@ public class Main {
                 rayCount++;
                 rayControl(userBoard, gb);
                 break;
-            case "STOP": // Exits program.
+            case "QUIT": // Exits program.
                 System.out.println("\nEnding program...");
                 System.exit(0);
                 break;
@@ -201,10 +201,10 @@ public class Main {
         int i = 0;
         int guessInput;
         int wrongGuesses = 0;
-        int[] guesses = {-1,-1,-1};
+        int[] guesses = {-1,-1,-1,-1,-1,-1};
         boolean flag = false;
         boolean flag2 = false;
-        while (i<3) {
+        while (i<6) {
             System.out.println("\nEnter the cell number where you think an atom is located:");
             try {
                 while (1==1) {
