@@ -7,6 +7,9 @@ public class Main {
 
 
 
+    /**
+     * Displays the main menu for the game.
+     */
     public static void mainMenu() { // Allows the user to start the game or to exit the program.
         System.out.println("Welcome To Black Box!\nPlease type START to begin or QUIT to end the program.");
         Scanner scanner = new Scanner(System.in);
@@ -34,6 +37,12 @@ public class Main {
         scanner.close();
     }
 
+
+    /**
+     * Generates atoms on the board.
+     *
+     * @param userBoard The board on which to generate atoms.
+     */
     public static void generateAtoms(Board userBoard) { // Generates three random numbers between 0-60 and adds atoms there. Doesn't allow duplicates.
         int[] currentAtoms = {-1,-1,-1,-1,-1,-1};
         boolean flag = false; // Flag set to true when a duplicate is detected.
@@ -58,7 +67,14 @@ public class Main {
         }
     }
 
-    public static void rayControl(Board userBoard, GraphicBoard gb) { // User can add rays, guess atom positions, or quit the program.
+    /**
+     * User can add rays, guess atom positions, or quit the program.
+     *
+     * @param userBoard The board to control ray addition.
+     * @param gb        The graphical representation of the board.
+     */
+
+    public static void rayControl(Board userBoard, GraphicBoard gb) {
         System.out.println("\nWould you like to ADD a ray, GUESS atom positions (will end game) or QUIT the program?");
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine().toUpperCase();
@@ -90,6 +106,12 @@ public class Main {
         scanner.close();
     }
 
+    /**
+     * Checks the validity of the user's chosen cell for adding a ray.
+     *
+     * @param scanner The scanner object to read user input.
+     * @return The valid cell number chosen by the user.
+     */
     public static int cellValidityCheck(Scanner scanner) { // Checks user input against the array to see if the cell is valid (an edge cell).
         int[] validCells = {0,1,2,3,4,5,10,11,17,18,25,26,34,35,42,43,49,50,55,56,57,58,59,60};
         while (1==1) {
@@ -117,6 +139,14 @@ public class Main {
         }
     }
 
+
+    /**
+     * Checks the validity of the user's chosen side for adding a ray.
+     *
+     * @param scanner    The scanner object to read user input.
+     * @param cellChoice The cell number chosen by the user.
+     * @return The valid side number chosen by the user.
+     */
     public static int sideValidityCheck(Scanner scanner, int cellChoice) { // Does the same as cellValidityCheck but for the proper side.
         int currentArray[] = arrayPicker(cellChoice); // Based on the cell the user picks, picks the array to compare user's side input to.
         while (1==1) {
@@ -144,7 +174,13 @@ public class Main {
         }
     }
 
-    public static int[] arrayPicker (int cellChoice) { // Picks an array to compare side validity against based on the user's cell choice.
+    /**
+     * Picks the array to compare side validity against based on the user's cell choice.
+     *
+     * @param cellChoice The cell number chosen by the user.
+     * @return The array of valid sides for the chosen cell.
+     */
+    public static int[] arrayPicker (int cellChoice) {
         int[] arrayA = {0,4,5};
         int[] arrayB = {0,5};
         int[] arrayC = {0,1,5};
@@ -197,6 +233,12 @@ public class Main {
         return null;
     }
 
+    /**
+     * Allows the user to guess atom positions.
+     *
+     * @param scanner The scanner object to read user input.
+     * @param gb      The graphical representation of the board.
+     */
     public static void guessAtoms(Scanner scanner, GraphicBoard gb) { // User guesses three cells where they think the atom is. Doesn't allow duplicate guesses, or invalid ones.
         int i = 0;
         int guessInput;
@@ -248,7 +290,13 @@ public class Main {
         displayScore(wrongGuesses, gb);
     }
 
-    public static void displayScore (int wrongGuesses, GraphicBoard gb) { // Shows the score for the board.
+    /**
+     * Displays the score for the board.
+     *
+     * @param wrongGuesses The number of incorrect guesses made by the user.
+     * @param gb           The graphical representation of the board.
+     */
+    public static void displayScore (int wrongGuesses, GraphicBoard gb) {
         int score = wrongGuesses * 5; // A wrong guess is worth 5 points.
         score += rayCount; // Each ray is worth one.
         System.out.println("\nYour final score for this board is " + score);
@@ -256,6 +304,11 @@ public class Main {
         mainMenu(); // Goes back to main menu should the user wish to play again.
     }
 
+    /**
+     * The main method that starts the game.
+     *
+     * @param args Command-line arguments (not used).
+     */
     public static void main(String[] args) {
         mainMenu();
     }
