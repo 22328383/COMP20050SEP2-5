@@ -27,11 +27,19 @@ public class GraphicBoard extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setVisible(true);
+        setBackground(Color.BLACK);
+        setTitle("Black Box+");
+        setIconImage(new ImageIcon("images/blackbox+icon.png").getImage());
+        setAlwaysOnTop(true);
+        JToolBar toolBar= new JToolBar();
+        //toolbar.set
+
     }
 
 
     public void paint(Graphics g){
         double initialx=300.0, initialy=200.0;
+        g.setColor(Color.YELLOW);
 
         paintExampleHexagon(g);
         paintHexagons(initialx, initialy, g);
@@ -113,6 +121,7 @@ public class GraphicBoard extends JFrame{
             }
             poly.closePath();
             Graphics2D g2d= (Graphics2D) g.create();
+            g2d.setStroke(new BasicStroke(3f));
             g2d.draw(poly);
             g2d.dispose();
         }
@@ -501,7 +510,7 @@ public class GraphicBoard extends JFrame{
 
     //chooses a ray marker colour based on how many ray marker sets
     private Color markerColor(int a){
-        Color[] colours={Color.BLUE, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.DARK_GRAY};
+        Color[] colours={Color.BLUE, Color.GREEN, Color.MAGENTA, Color.ORANGE, Color.LIGHT_GRAY};
         return colours[a%5];
     }
 
