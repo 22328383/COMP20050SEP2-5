@@ -1,6 +1,9 @@
 import java.io.*;
 import java.util.ArrayList;
 
+/**
+ * A board with hexagon cells in it. A given game.
+ */
 public class Board implements Serializable {
     static final int MAXCELLS = 61;
     static final int[] ROWCELLCNT = genCellCount(9); // cell count for each row
@@ -8,6 +11,11 @@ public class Board implements Serializable {
     private ArrayList<Cell> allCells = new ArrayList<>();
     ArrayList<ArrayList<Integer>> allRays = new ArrayList<>();
 
+    /**
+     * Returns the list of all rays on the board.
+     *
+     * @return the list of all rays
+     */
     public ArrayList<ArrayList<Integer>> getAllRays() {
         return allRays;
     }
@@ -25,6 +33,11 @@ public class Board implements Serializable {
         return new Board();
     }
 
+    /**
+     * Saves the current board state to a file.
+     *
+     * @throws IOException if an I/O error occurs while saving the board
+     */
     //save state to file
     public void saveBoard() throws IOException {
         String filename = "save.ser";
@@ -33,6 +46,13 @@ public class Board implements Serializable {
         }
     }
 
+    /**
+     * Loads the board state from a file.
+     *
+     * @return the Board object loaded from the file
+     * @throws IOException            if an I/O error occurs while loading the board
+     * @throws ClassNotFoundException if the class of the serialized object cannot be found
+     */
     //load state from file
     public static Board loadBoard() throws IOException, ClassNotFoundException {
         String filename = "save.ser";
@@ -41,11 +61,23 @@ public class Board implements Serializable {
         }
     }
 
+    /**
+     * Returns the list of all cells on the board.
+     *
+     * @return the list of all cells
+     */
     // getter for all cells on a board
     public ArrayList<Cell> getAllCells() {
         return allCells;
     }
 
+    /**
+     * Generates the number of cells for each row of the board grid.
+     *
+     * @param numRows the number of rows in the grid
+     * @return an array containing the number of cells for each row
+     * @throws IllegalArgumentException if the number of rows is not positive
+     */
     // method to generate cell count for each row
     public static int[] genCellCount(int numRows) {
         if(numRows <= 0) {
@@ -64,6 +96,12 @@ public class Board implements Serializable {
         return cellCounts;
     }
 
+    /**
+     * Sets an atom at the specified index.
+     *
+     * @param idx the index where the atom is to be set
+     * @throws IllegalArgumentException if the index is out of range
+     */
     // method to set an atom at specified index
     public void setAtom(int idx) {
         checkIndex(idx);
@@ -247,6 +285,13 @@ public class Board implements Serializable {
         return result;
     }
 
+    /**
+     * Retrieves the idxs of the neighboring cells for a given cell index on the board.
+     *
+     * @param idx the index of the cell
+     * @return an array containing the indexes of neighboring cells
+     * @throws IllegalArgumentException if the index is out of range
+     */
     // retrieves the indexes of the neighboring cells for a given cell index on a grid.
     public int[] getNeighbors(int idx) {
         checkIndex(idx);
@@ -279,6 +324,13 @@ public class Board implements Serializable {
         return neighborsArray;
     }
 
+    /**
+     * Converts a cell's idx to its coordinate system location.
+     *
+     * @param idx the index of the cell
+     * @return an array containing the x and y coordinates
+     * @throws IllegalArgumentException if the index is out of range
+     */
     // converts a cells index to a co-ord based system location
     public int[] getCoordinates(int idx) {
         checkIndex(idx);
@@ -298,6 +350,14 @@ public class Board implements Serializable {
         return new int[]{x, y};
     }
 
+    /**
+     * Finds the row number from a cell's index.
+     *
+     * @param idx        the index of the cell
+     * @param cellCounts the array containing the number of cells for each row
+     * @return the row number
+     * @throws IllegalArgumentException if the index is out of range
+     */
     // finds the row number from a cells index
     public static int findRow(int idx, int[] cellCounts) {
         checkIndex(idx);
@@ -317,6 +377,14 @@ public class Board implements Serializable {
         return row;
     }
 
+    /**
+     * Determines the behavior of a ray entering a cell and applies physics rules.
+     *
+     * @param idx          the index of the cell where the ray enters
+     * @param enteringSide the side from which the ray enters the cell
+     * @return the result of applying physics rules
+     * @throws IllegalArgumentException if the index is out of range
+     */
     // determines the behaviour of a ray entering a cell
     private int applyPhys(int idx, int enteringSide) {
         checkIndex(idx);
@@ -395,6 +463,7 @@ public class Board implements Serializable {
                 }
             }
 
+            //special cases when an atom reflects at a outer rim
             if((enteringSide == 1)) {
                 int testingIdx = right(idx, x, y);
                 if(testingIdx < 0) {
@@ -525,6 +594,13 @@ public class Board implements Serializable {
         return 0;
     }
 
+    /**
+     * Simulates ray propagation by recursively applying rules until termination.
+     *
+     * @param idx  the index of the cell where the ray starts
+     * @param side the side from which the ray enters the cell
+     * @throws IllegalArgumentException if the index is out of range
+     */
     // simulates ray propagation by recursively applying rules until termination
     public void addRay(int idx, int side) {
         checkIndex(idx);
@@ -647,6 +723,11 @@ public class Board implements Serializable {
         allRays.add(newRay);
     }
 
+    /**
+     * Returns a string representation of the board, including cells and rays, in ASCII format.
+     *
+     * @return a string representation of the board
+     */
     // usually for debugging/testing, helper function that draws a version of a board in ASCII
     @Override
     public String toString() {
@@ -701,21 +782,46 @@ public class Board implements Serializable {
         private final String[] playerNames;
         private int[] scores;
 
+        /**
+         * Constructs a new scoreboard with player names.
+         *
+         * @param p1Name the name of player 1
+         * @param p2Name the name of player 2
+         */
         public Scoreboard(String p1Name, String p2Name) {
             playerNames = new String[] {p1Name, p2Name};
             scores = new int[2];
         }
 
+        /**
+         * Increases the score of a player by a specified number of points.
+         *
+         * @param playerIndex the index of the player (0 or 1)
+         * @param points      the number of points to increase the score by
+         */
         private void increaseScore(int playerIndex, int points) {
             scores[playerIndex] += points;
         }
 
+        /**
+         * Calculates the score for a player based on the number of rays and wrong counts.
+         *
+         * @param playerIndex the index of the player (0 or 1)
+         * @param numRays     the number of rays
+         * @param wrongCnt    the count of wrong moves
+         */
         public void calculateScore(int playerIndex, int numRays, int wrongCnt) {
             int penalty = wrongCnt * 5;
             increaseScore(playerIndex , numRays);
             increaseScore(playerIndex , penalty);
         }
 
+        /**
+         * Retrieves the player's score based on their index.
+         *
+         * @param playerIndex the index of the player (0 or 1)
+         * @return the player's score
+         */
         public int getScore(int playerIndex) {
             return scores[playerIndex];
         }
